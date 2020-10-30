@@ -1,0 +1,315 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+
+* {
+    font-family: 'Open Sans', sans-serif;
+    /* color: #7e7e7e; */
+}
+
+:root {
+    --green: #3bbd1b;
+    --red: rgb(197, 6, 6);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+html, body, main {
+    width: 100%;
+    height: 100%;
+}
+
+main {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+main > * {
+    margin-bottom: 1rem;
+}
+
+main > *:last-of-type {
+    margin-bottom: 0;
+}
+
+#table {
+    flex-wrap: wrap;
+    width: 100%;
+    height: fit-content;
+    
+    display: inline-grid;
+    display: none;
+    grid-template-columns: 50px 50px 50px 50px;
+    border-bottom: 3px solid black;
+    border-left: 3px solid black;
+}
+
+.cell {
+    height: 5rem;
+    background-color: rgb(201, 201, 201);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: capitalize;
+
+    padding: 15px;
+    text-align: center;
+    border-top: 3px solid black;
+    border-right: 3px solid black;
+}
+
+.cell:hover {
+    background-color: rgb(219, 219, 219);
+    cursor: pointer;
+}
+
+.cell[data-fill]:hover {
+    cursor: not-allowed;
+}
+
+.cell[data-fill="red"] {
+    background-color: red;
+}
+
+.cell[data-fill="green"] {
+    background-color: var(--green);
+}
+
+.cell[data-fill="blue"] {
+    background-color: blue;
+}
+
+.cell[data-fill="yellow"] {
+    background-color: yellow;
+}
+
+.cell[data-fill="black"] {
+    background-color: black;
+    color: white;
+}
+
+/* Scoreboard */
+
+#scoreboard {
+    display: none;
+    flex-direction: row;
+    background-color: black;
+    width: 100%;
+    justify-content: space-around;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+}
+
+.score {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+#red_score {
+    color: red;
+}
+#green_score {
+    color: var(--green);
+}
+#blue_score {
+    color: blue;
+}
+#yellow_score {
+    color: yellow;
+}
+
+#red_score::before {
+    content: 'Red: ';
+}
+#green_score::before {
+    content: 'Green: ';
+}
+#blue_score::before {
+    content: 'Blue: ';
+}
+#yellow_score::before {
+    content: 'Yellow: ';
+}
+
+/* FORM */
+
+.prompt_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 30rem);
+    background-color: whitesmoke;
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+.prompt_form * {
+    margin: .5rem 0;
+}
+
+#login_form {
+    margin: auto;
+}
+
+h1 {
+    width: 100%;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.column {
+    width: calc(100% / 3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button {
+    padding: .5rem 1rem;
+    border-radius: .25rem;
+    background-color: var(--green);
+    color: white;
+    border: 2px solid var(--green);
+}
+
+button::after {
+    font-family: FontAwesome; font-weight: 400; content: " \f061";
+}
+
+#reset_board::before {
+    content: "Start ";
+}
+
+#reset_board.red-btn {
+    background-color: var(--red);
+    border-color: var(--red);
+}
+
+#reset_board.red-btn::before {
+    content: "Restart ";
+}
+
+#reset_board.red-btn:hover {
+    color: var(--red);
+    background-color: white;
+}
+
+/* Select & Options */
+
+select {
+    text-align: center;
+    width: 85%;
+    border-radius: .5rem;
+}
+
+option {
+    margin: 0 !important;
+}
+
+option:checked {
+    font-weight: bold;
+}
+
+option:checked::before {
+    font-family: FontAwesome; font-weight: 400; content: "\f178  ";
+}
+
+/* Other Menus */
+
+#host_controls {
+    display: none;
+}
+
+#game_status {
+    display: none;
+}
+
+.warning {
+    color: var(--red);
+    font-weight: bold;
+}
+
+#loading {
+    display: none;
+}
+
+/* Modals */
+
+#modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: #00000080
+}
+
+#modal_win {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem 2.5rem;
+
+    background-color: white;
+    border-radius: .5rem;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+#modal_win * {
+    color: white;
+}
+
+#winner_status {
+    font-size: 1.75rem;
+    margin-bottom: .5rem;
+}
+
+#winner_status::after {
+    content: " Won! 👑";
+}
+
+/* Hover States */
+
+button, option {
+    transition: all .2s ease-in-out;
+    -webkit-transition: all .2s ease-in-out;
+}
+
+button:hover {
+    color: var(--green);
+    background-color: white;
+}
+
+option:hover {
+    font-weight: bold;
+}
