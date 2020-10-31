@@ -106,6 +106,8 @@ main > *:last-of-type {
 .score {
     font-size: 1.5rem;
     margin-right: 1rem;
+    padding: .25rem;
+    border: 2px solid black;
 }
 
 #red_score {
@@ -122,16 +124,21 @@ main > *:last-of-type {
 }
 
 #red_score::before {
-    content: 'Red: ';
+    content: 'Player 1: ';
 }
 #green_score::before {
-    content: 'Green: ';
+    content: 'Player 2: ';
 }
 #blue_score::before {
-    content: 'Blue: ';
+    content: 'Player 3: ';
 }
 #yellow_score::before {
-    content: 'Yellow: ';
+    content: 'Player 4: ';
+}
+
+.current_player {
+    border: 2px solid white;
+    border-radius: .5rem;
 }
 
 /* FORM */
@@ -235,9 +242,21 @@ option:checked::before {
     display: none;
 }
 
-.warning {
+p.warning {
     color: var(--red);
     font-weight: bold;
+}
+
+button.warning {
+    color: white;
+    background-color: var(--red);
+    border-color: var(--red);
+}
+
+button.warning:hover {
+    color: var(--red);
+    background-color: white;
+    border-color: var(--red);
 }
 
 #loading {
@@ -256,33 +275,36 @@ option:checked::before {
     display: none;
     justify-content: center;
     align-items: center;
-    background-color: #00000080
+    background-color: #00000080;
+    z-index: 10;
 }
 
-#modal_win {
+.modal_open {
+    display: flex !important;
+}
+
+.modal_common {
     display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 1.5rem 2.5rem;
-
     background-color: white;
     border-radius: .5rem;
+}
+
+.modal_common > * {
+    margin-bottom: 1rem !important;
+}
+
+.modal_common > *:last-of-type {
+    margin-bottom: 0;
+}
+
+#modal_win {
     background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
-}
-
-@keyframes gradient {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
 }
 
 #modal_win * {
@@ -312,4 +334,32 @@ button:hover {
 
 option:hover {
     font-weight: bold;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Wait to move */
+
+#wait_to_move {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    background-color: whitesmoke;
+    padding: 1rem;
+    border-radius: .5rem;
+    display: none;
+}
+
+#wait_to_move::before {
+    content: "Wait..";
 }

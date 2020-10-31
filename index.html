@@ -84,7 +84,7 @@
     
                     <option value="9">3x3 DEV</option>
                     <option value="25">5x5</option>
-                    <option value="36">6x6</option>
+                    <option value="36">6x6 Max recc. for Mobile</option>
                     <option value="64">8x8</option>
                     <option value="100">10x10</option>
                 </select>
@@ -99,10 +99,22 @@
         </div>
     </main>
     <div id="modal">
-        <div id="modal_win">
-            <h2 id="winner_status">Red</h2>
-            <p>Waiting for host...</p>
+        <div class="modal_common" id="modal_win">
+            <h2 id="winner_status"></h2>
         </div>
+        <div class="modal_common" id="modal_bomb">
+            <h2>Oh no a bomb!</h2>
+            <h1>💣</h1>
+            <button id="disarm">Disarm</button>
+            <button class="warning" id="kill">Don't disarm</button>
+        </div>
+        <div class="modal_common" id="modal_dead">
+            <h2>BOOM! You died... womp</h2>
+            <button id="close_modal">Okay</button>
+        </div>
+    </div>
+    <div id="wait_to_move">
+        2s
     </div>
 </body>
 

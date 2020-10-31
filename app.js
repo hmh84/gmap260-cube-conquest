@@ -1,9 +1,64 @@
+// ====================
+// GENERAL FUNCTIONS
+// ====================
+
 function no() {
     // do nothing
 }
 
+const modal = document.querySelector('#modal');
+const all_modals = document.querySelectorAll('.modal_common');
+
+function toggle_modal(new_modal) {
+    modal.classList.add('modal_open');
+    all_modals.forEach(modal => {
+        modal.style.display = 'none';
+    });
+    if (new_modal == 'close') {
+        modal.classList.remove('modal_open');
+    } else {
+        document.querySelector(`#${new_modal}`).style.display = 'flex';
+    }
+};
+
+const disarm = document.querySelector('#disarm');
+const close_modal = document.querySelector('#close_modal');
+
+disarm.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggle_modal('close');
+});
+
+function arm_bomb(cell) {
+    var old_e = document.querySelector('#kill');
+    var new_e = old_e.cloneNode(true);
+    old_e.parentNode.replaceChild(new_e, old_e);
+
+    const kill = document.querySelector('#kill');
+    kill.addEventListener('click', (e) => {
+        e.preventDefault();
+
+
+        kill_player(cell);
+        toggle_modal('modal_dead');
+    });
+}
+
+function kill_player(cell) {
+    window.dead = true;
+    cell.dataset.fill = 'black';
+    cell.innerText = '☠️ ' + current_player;
+    push_death_innerText(cell.dataset.index);
+    push_death(current_player);
+}
+
+close_modal.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggle_modal('close');
+})
+
 // ====================
-// Forms
+// FORMS
 // ====================
 
 const login_form = document.querySelector('#login_form');
@@ -35,6 +90,7 @@ login_button.addEventListener('click', (e) => {
 
         window.current_session = session_input.value;
         window.current_player = player_input.value;
+        document.querySelector(`#${current_player}_score`).classList.add('current_player');
         window.current_role = role_input.value;
 
         if (current_role === 'host') {
@@ -55,10 +111,10 @@ login_button.addEventListener('click', (e) => {
 });
 
 // ====================
-// Table and Cells
+// HOST SETUP
 // ====================
 
-// ===== Client Side =====
+// ===== Initialize Board =====
 
 function host_init_game() {
     window.cell_qty = table_size_input.value; // Amount of cells to be displayed
@@ -82,19 +138,24 @@ function host_init_game() {
                     setTimeout(() => {
                         update_scoreboard();
                         setTimeout(() => {
-                            send_ready_signal();
-                            // host_controls.style.display = 'flex'; // Maybe not
+                            reset_scores();
                             setTimeout(() => {
-                                add_event_listeners();
-                                for (i = 0; i < cells.length; i++) {
-                                    add_cell_snapshot(i);
-                                }
-                                reset_board.classList.add('red-btn');
+                                send_ready_signal();
+                                setTimeout(() => {
+                                    add_event_listeners();
+                                    for (i = 0; i < cells.length; i++) {
+                                        add_cell_snapshot(i);
+                                    }
+                                    reset_board.classList.add('red-btn');
 
-                                table.style.display = 'flex';
-                                scoreboard.style.display = 'flex';
-                                loading.style.display = 'none';
-                                // host_controls.style.display = 'flex'; // Maybe not
+                                    table.style.display = 'flex';
+                                    scoreboard.style.display = 'flex';
+                                    loading.style.display = 'none';
+                                    window.dead = false;
+                                    add_score_snapshot_listeners();
+                                    // host_controls.style.display = 'flex'; // Maybe not
+                                }, 1000);
+
                             }, 1000);
                         }, 1000);
                     }, 1000);
@@ -105,6 +166,8 @@ function host_init_game() {
 
     asyncCall();
 }
+
+// ===== Client Side Setup =====
 
 function add_cells() {
     for (i = 0; i < cell_qty; i++) {
@@ -130,17 +193,29 @@ function resize_board() {
     document.head.appendChild(style); // Append style to DOM
 }
 
+const wait_to_move = document.querySelector('#wait_to_move');
+
+window.block_player = false;
 function fill_cell(cell) {
-    if (!cell.dataset.fill) {
+    if (!cell.dataset.fill && !dead && !block_player) {
+        window.block_player = true;
+
+        wait_to_move.style.display = 'flex';
+        wait_to_move.innerText = '2s';
+        setTimeout(function () {
+            wait_to_move.innerText = '1s';
+        }, 1000);
+        setTimeout(function () {
+            wait_to_move.style.display = 'none';
+            window.block_player = false;
+        }, 2000);
+
         cell.dataset.fill = current_player;
         push_selection(cell);
         update_scoreboard();
         if (cell.dataset.bomb) {
-            alert('BOOM! You died... womp :(') // DON'T USE ALERT IN PRODUCTION
-            cell.dataset.fill = 'black'; //local
-            cell.innerText = '☠️ ' + current_player; //local
-            block_player();
-            push_death_innerText(cell.dataset.index);
+            toggle_modal('modal_bomb');
+            arm_bomb(cell);
         }
     }
 }
@@ -150,7 +225,7 @@ function load_bombs() {
 
         const x = Math.random().toFixed(2);
         if (!cells[i].dataset.fill) { // If cell is not filled already
-            if (x <= 0.15) { // 15% chance of bomb
+            if (x <= 0.2) { // 20% chance of bomb
                 cells[i].dataset.bomb = true;
                 push_bombs(i);
             }
@@ -181,7 +256,7 @@ function add_event_listeners() {
     });
 }
 
-// ===== Server Side =====
+// ===== Server Side Setup =====
 
 function push_indexes(cell) { // SET
     docRef = db.collection('sessions').doc(current_session).collection('cells').doc(cell.dataset.index);
@@ -258,6 +333,21 @@ function push_death_innerText(index) { // UPDATE Method
     });
 }
 
+function push_death(current_player) {
+    docRef = db.collection('sessions').doc(current_session).collection('scores').doc(`${current_player}`);
+
+    const data = { // Create data
+        dead: true,
+    };
+
+    docRef.update(data).then(function () { // Push data to DB
+        // do stuff after
+        console.log('Pushed death');
+    }).catch(function (error) {
+        console.error(error);
+    });
+}
+
 function send_ready_signal() {
     docRef = db.collection('sessions').doc(current_session).collection('ready').doc('ready');
     var autoID = db.collection('sessions').doc().id;
@@ -275,7 +365,7 @@ function send_ready_signal() {
 }
 
 // ====================
-// Scoreboard
+// SCOREBOARD
 // ====================
 
 const red_score = document.querySelector('#red_score');
@@ -319,11 +409,9 @@ function update_scoreboard() {
     check_for_win(scores);
 }
 
-// update_scoreboard() // An Init
-
-const modal = document.querySelector('#modal');
-const win_modal = document.querySelector('#modal_win');
+const modal_win = document.querySelector('#modal_win');
 const winner_status = document.querySelector('#winner_status');
+const modal_bomb = document.querySelector('#modal_bomb');
 
 function check_for_win(scores) {
     const filled_cells = document.querySelectorAll('.cell[data-fill]');
@@ -332,21 +420,36 @@ function check_for_win(scores) {
         const winner = Math.max.apply(Math, scores.map(function (o) { return o.count; }));
         console.log('Win: ' + winner);
         // Display winner name
-        modal.style.display = 'flex';
-        win_modal.style.display = 'flex';
+        toggle_modal('modal_win');
         winner_status.innerText = winner;
     }
 }
 
-function block_player() {
-    player_input.dataset.dead == true;
-}
+// ===== Server Side Scoreboard =====
 
-// ===== Server Side =====
+function reset_scores() {
+    for (i = 0; i < scores.length; i++) {
+        const player = scores[i].name.toLowerCase();
+        docRef = db.collection('sessions').doc(current_session).collection('scores').doc(player);
+
+        const data = { // Create data
+            count: scores[i].count,
+            dead: false,
+        };
+
+        docRef.set(data).then(function () { // Push data to DB
+            // do stuff after
+            console.log('Pushed score');
+        }).catch(function (error) {
+            console.error(error);
+        });
+
+    }
+}
 
 function push_scores() {
     for (i = 0; i < scores.length; i++) {
-        const player = scores[i].name;
+        const player = scores[i].name.toLowerCase();
         docRef = db.collection('sessions').doc(current_session).collection('scores').doc(player);
 
         const data = { // Create data
@@ -364,8 +467,10 @@ function push_scores() {
 }
 
 // ====================
-// PLAYER Setup
+// LOCAL/PLAYER SETUP
 // ====================
+
+// ===== Download/Initialize Board =====
 
 function player_init_game() {
     var r_x = 0;
@@ -400,6 +505,7 @@ function pull_cell_count() {
                     window.cell_qty = cell_count; // Amount of cells to be displayed
                     resize_board();
                     loading.style.display = 'flex';
+                    add_score_snapshot_listeners();
                 }
             }
         } else {
@@ -450,12 +556,11 @@ function local_build_cell(i, index, bomb, fill, innerText) {
     scoreboard.style.display = 'flex';
     table.style.display = 'flex';
     loading.style.display = 'none';
-    add_cell_snapshot(i)
+    add_cell_snapshot(i);
+    window.dead = false;
 }
 
-// ====================
-// INTRA-GAME SNAPSHOTS
-// ====================
+// ===== Intra-Game Snapshot Listeners =====
 
 function add_cell_snapshot(i) {
     var r_x = 0;
@@ -463,6 +568,7 @@ function add_cell_snapshot(i) {
         .onSnapshot(function (doc) {
             //do stuff
             r_x++;
+
             if (r_x > 1) { // After 2nd snapshot
                 const docRef = db.collection("sessions").doc(current_session).collection('cells').doc(`${i}`);
 
@@ -486,9 +592,41 @@ function add_cell_snapshot(i) {
         });
 }
 
+function add_score_snapshot_listeners() {
+    for (i = 0; i < scores.length; i++) {
+        const player = scores[i].name.toLowerCase();
+        const docRef = db.collection("sessions").doc(current_session).collection('scores').doc(player);
+        window.death_count = 0; // Reset
+
+        docRef.onSnapshot(function (doc) {
+
+            docRef.get().then(function (doc) {
+                if (doc.exists) {
+                    const result = doc.data();
+
+                    const dead = result.dead;
+                    dead && window.death_count++;
+
+                    console.log(death_count);
+                } else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+            }).catch(function (error) {
+                console.log("Error getting document:", error);
+            });
+
+        });
+    }
+}
+
 // TASKS
 
-// 1. Push and pull innerText
-// 2. Decipher winner name
-
-// 3. Push and pull deaths???
+// 3. Add timer
+// 10. If all players are dead the game ends
+// 4. Decipher winner name instead of score
+// 5. Only allow movement in NSEW directions
+// 6. SFX
+// 7. Add actual mini-game to death modal
+// 8. Change score after death
+// 9. Fix host controls not fitting on iPad
