@@ -1,9 +1,42 @@
 // ====================
+// INTRODUCTION
+// ====================
+
+const modal_intro = document.querySelector('#modal_intro');
+const hide_intro = document.querySelector('#hide_intro');
+const intro_button = document.querySelector('#intro_button');
+
+intro_button.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggle_modal('modal_intro');
+});
+
+hide_intro.addEventListener('click', (e) => {
+    e.preventDefault();
+    sessionStorage.setItem('intro', 'false');
+    console.log('intro set to: ' + sessionStorage.getItem('intro'));
+    toggle_modal('close');
+});
+
+if (sessionStorage.getItem('intro') === 'true') {
+    console.log('Init intro = ' + sessionStorage.getItem('intro'));
+    toggle_modal('modal_intro');
+}
+
+// ====================
 // GENERAL FUNCTIONS
 // ====================
 
 function no() {
     // do nothing
+}
+
+function timestamp() { // Returns the current timestamp, Usage: "console.log(timestamp());"
+    return firebase.firestore.Timestamp.fromDate(new Date());
+}
+
+function format_tstamp(tstamp) { // Formats moment.js timestamp into cleaner format
+    return moment(tstamp.toDate()).format("hhmmss");
 }
 
 const modal = document.querySelector('#modal');
@@ -197,7 +230,7 @@ const wait_to_move = document.querySelector('#wait_to_move');
 
 window.block_player = false;
 function fill_cell(cell) {
-    if (!cell.dataset.fill && !dead && !block_player) {
+    if (!cell.dataset.fill && !dead && !block_player && !time_block) {
         window.block_player = true;
 
         wait_to_move.style.display = 'flex';
@@ -255,6 +288,64 @@ function add_event_listeners() {
         })
     });
 }
+
+function sync_game(sync_time, game_timer) {
+    const host_sync = parseInt(format_tstamp(sync_time));
+    const start_time = host_sync + 5; // 5 Second delay
+    const end_time = start_time + parseInt(game_timer);
+
+    console.log('game_timer = ' + game_timer);
+    console.log('host_sync = ' + host_sync);
+    console.log('start_time = ' + start_time);
+    console.log('end_time = ' + end_time);
+
+    (function () {
+        // Sync Game
+        var check_time = function () {
+            const current = parseInt(format_tstamp(timestamp()));
+            const time_diff = start_time - current;
+            timer.style.display = 'flex';
+            timer.innerText = 'Match Starts in ' + time_diff + 's';
+
+            if (current >= start_time) { // Start time
+                clearInterval(s); // End Sync Checks
+                update_scoreboard();
+                timer.innerText = 'Go!';
+                window.time_block = false;
+                window.c_rep = setInterval(countdown, 1000) // Start Countdown
+            } else {
+                window.time_block = true;
+            }
+        };
+
+        var s = setInterval(check_time, 100); // Start it right away, check every 1/10s
+
+        // Set Countdown
+        var countdown = function () {
+            const current = parseInt(format_tstamp(timestamp()));
+            const time_diff = end_time - current;
+
+            console.log('current = ' + current);
+            console.log('end_time = ' + end_time);
+            console.log('start_time = ' + start_time);
+
+            timer.innerText = 'Time Remaining: ' + time_diff + 's';
+
+            if (current >= end_time) { // Start time
+                clearInterval(c_rep);
+                timer.innerText = 'Time!';
+                window.time_block = true;
+                declare_win();
+            } else {
+                window.time_block = false;
+            }
+        };
+    })();
+}
+
+// Start time = 22640
+// End time   = 2264045
+// Time Diff  = 2241405
 
 // ===== Server Side Setup =====
 
@@ -348,15 +439,19 @@ function push_death(current_player) {
     });
 }
 
-function send_ready_signal() {
+function send_ready_signal() { // SET Method
     docRef = db.collection('sessions').doc(current_session).collection('ready').doc('ready');
     var autoID = db.collection('sessions').doc().id;
     const data = { // Create data
         status: autoID,
         cells: cells.length,
+        sync_time: timestamp(),
+        game_timer: timer_input.value
     };
 
-    docRef.update(data).then(function () { // Push data to DB
+    sync_game(timestamp(), timer_input.value) // Host game sync
+
+    docRef.set(data).then(function () { // Push data to DB
         // do stuff after
         console.log('Session is ready!');
     }).catch(function (error) {
@@ -417,12 +512,16 @@ function check_for_win(scores) {
     const filled_cells = document.querySelectorAll('.cell[data-fill]');
     window.cells = document.querySelectorAll('.cell');
     if (filled_cells.length === cells.length) {
-        const winner = Math.max.apply(Math, scores.map(function (o) { return o.count; }));
-        console.log('Win: ' + winner);
-        // Display winner name
-        toggle_modal('modal_win');
-        winner_status.innerText = winner;
+        declare_win();
     }
+}
+
+function declare_win() {
+    const winner = Math.max.apply(Math, scores.map(function (o) { return o.count; }));
+    console.log('Win: ' + winner);
+    // Display winner name
+    toggle_modal('modal_win');
+    winner_status.innerText = winner;
 }
 
 // ===== Server Side Scoreboard =====
@@ -470,6 +569,8 @@ function push_scores() {
 // LOCAL/PLAYER SETUP
 // ====================
 
+window.time_block = true; // Init
+
 // ===== Download/Initialize Board =====
 
 function player_init_game() {
@@ -498,7 +599,14 @@ function pull_cell_count() {
 
     docRef.get().then(function (doc) {
         if (doc.exists) {
-            const cell_count = doc.data().cells;
+            const result = doc.data();
+
+            const cell_count = result.cells;
+            const sync_time = result.sync_time;
+            const game_timer = result.game_timer;
+
+            sync_game(sync_time, game_timer);
+
             for (i = 0; i < cell_count; i++) {
                 build_local_board(i);
                 if (i === cell_count - 1) { // When completed...

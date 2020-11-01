@@ -13,6 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js" defer></script>
     <script src="https://kit.fontawesome.com/a57c47fadc.js" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" defer></script>
     <script src="firebase-config.js" defer></script>
     <script src="app.js" defer></script>
     <!-- Styles -->
@@ -70,7 +71,7 @@
 
             </div>
 
-            <button id="login_button">Join game</button>
+            <button class="proceed" id="login_button">Join game</button>
         </form>
         <h1 id="game_status">Waiting for host to start game...</h1>
         <div id="table">
@@ -82,20 +83,38 @@
                 <select id="table_size_input">
                     <option value="null">Select</option>
     
-                    <option value="9">3x3 DEV</option>
+                    <option value="9">3x3 [DEV]</option>
                     <option value="25">5x5</option>
                     <option value="36">6x6 Max recc. for Mobile</option>
                     <option value="64">8x8</option>
                     <option value="100">10x10</option>
                 </select>
-                <button id="reset_board">Game</button>
+                <h2>Set Timer (m:ss)</h2>
+                <select id="timer_input">
+                    <option value="null">Select</option>
+    
+                    <option value="10">0:10 [DEV]</option>
+                    <option value="45">0:45</option>
+                    <option value="60">1:00</option>
+                    <option value="90">1:30</option>
+                    <option value="120">2:00</option>
+                </select>
+                <button class="warning" id="reset_board">Game</button>
                 <p class="warning">Wait until all players have joined to start!</p>
             </form>
         </div>
-        <div id="timer"></div>
-        <div id="loading">
-            <i class="fas fa-spinner fa-pulse fa-3x"></i>
-            <p id="progress"></p>
+        <div id="status_bar">
+            <div id="wait_to_move">
+                2s
+            </div>
+            <div id="timer">
+                <!-- Time populated here -->
+            </div>
+            <button id="intro_button">?</button>
+            <div id="loading">
+                <i class="fas fa-spinner fa-pulse fa-3x"></i>
+                <p id="progress"></p>
+            </div>
         </div>
     </main>
     <div id="modal">
@@ -110,11 +129,15 @@
         </div>
         <div class="modal_common" id="modal_dead">
             <h2>BOOM! You died... womp</h2>
-            <button id="close_modal">Okay</button>
+            <button class="proceed" id="close_modal">Okay</button>
         </div>
-    </div>
-    <div id="wait_to_move">
-        2s
+        <div class="modal_common" id="modal_intro">
+            <h2>Instructions:</h2>
+            <p>1. Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+            <p>2. Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+            <p>3. Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+            <button class="proceed" id="hide_intro">Hide</button>
+        </div>
     </div>
 </body>
 

@@ -8,6 +8,7 @@
 :root {
     --green: #3bbd1b;
     --red: rgb(197, 6, 6);
+    --blue: rgb(0, 131, 245);
 }
 
 html {
@@ -190,7 +191,7 @@ button {
     border: 2px solid var(--green);
 }
 
-button::after {
+button.proceed::after {
     font-family: FontAwesome; font-weight: 400; content: " \f061";
 }
 
@@ -351,9 +352,9 @@ option:hover {
 /* Wait to move */
 
 #wait_to_move {
-    position: fixed;
+    /* position: fixed;
     bottom: 1rem;
-    left: 1rem;
+    left: 1rem; */
     background-color: whitesmoke;
     padding: 1rem;
     border-radius: .5rem;
@@ -362,4 +363,28 @@ option:hover {
 
 #wait_to_move::before {
     content: "Wait..";
+}
+
+#status_bar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#intro_button {
+    background-color: var(--blue);
+    border-color: var(--blue);
+    border-radius: .5rem;
+    font-weight: bold;
+}
+
+#intro_button:hover {
+    background-color: white;
+    color: var(--blue);
+}
+
+#timer {
+    display: none;
 }
