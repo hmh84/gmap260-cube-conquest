@@ -79,7 +79,7 @@ function arm_bomb(cell) {
 
 function kill_player(cell) {
     window.dead = true;
-    tone_explode.play();
+    play_tone('explode');
     cell.dataset.fill = 'black';
     cell.innerText = '☠️ ' + current_player;
     push_death_innerText(cell.dataset.index);
@@ -237,7 +237,6 @@ window.block_player = false; // Init
 function fill_cell(cell) {
     // if (!cell.dataset.fill && !dead && !block_player && !time_block && check_adjacent(cell)) {
     if (!cell.dataset.fill && !dead && !block_player && !time_block) {
-        tone_p1_select.play();
         window.block_player = true;
 
         wait_to_move.style.opacity = '1';
@@ -255,7 +254,11 @@ function fill_cell(cell) {
         update_scoreboard();
         if (cell.dataset.bomb) {
             toggle_modal('modal_bomb');
+            play_tone('uh-oh');
             arm_bomb(cell);
+            play_tone('uh-oh');
+        } else {
+            play_tone('p1_select');
         }
     }
 }
@@ -337,10 +340,12 @@ function sync_game(sync_time, game_timer) {
             timer.style.opacity = '1';
             timer.innerText = 'Match Starts in ' + time_diff + 's';
 
+
             if (current >= start_time) { // Start time
                 clearInterval(s); // End Sync Checks
                 update_scoreboard();
                 timer.innerText = 'Go!';
+                play_tone('start');
                 window.time_block = false;
                 window.c_rep = setInterval(countdown, 1000) // Start Countdown
             } else {
@@ -349,6 +354,19 @@ function sync_game(sync_time, game_timer) {
         };
 
         var s = setInterval(check_time, 100); // Start it right away, check every 1/10s
+
+        var tone_checks = function () {
+            const current = parseInt(format_tstamp(timestamp()));
+            const time_diff = start_time - current;
+
+            if (time_diff === 3 || time_diff === 2 || time_diff === 1) {
+                play_tone('countdown');
+            }
+            console.log('Time Diff = ' + time_diff);
+            current >= start_time && clearInterval(t_rep); // End Tone Checks
+        }
+
+        var t_rep = setInterval(tone_checks, 1000); // Start it right away, check every 1s
 
         // Set Countdown
         let countdown_time = game_timer;
@@ -359,6 +377,10 @@ function sync_game(sync_time, game_timer) {
             countdown_time = countdown_time - 1;
 
             timer.innerText = 'Time Remaining: ' + countdown_time + 's';
+
+            if (countdown_time === 3 || countdown_time === 2 || countdown_time === 1) {
+                play_tone('countdown');
+            }
 
             if (current >= end_time) { // Start time
                 clearInterval(c_rep);
@@ -552,7 +574,7 @@ function check_for_win(scores) {
 function declare_win() {
     const winner = Math.max.apply(Math, scores.map(function (o) { return o.count; }));
     console.log('Win: ' + winner);
-    tone_win.play();
+    play_tone('win');
     // Display winner name
     toggle_modal('modal_win');
     winner_status.innerText = winner;
@@ -722,7 +744,16 @@ function add_cell_snapshot(i) {
                 const fill = result.fill;
                 const innerText = result.innerText;
 
-                fill === undefined ? no() : cells[i].dataset.fill = fill;
+                function place_selection(fill) {
+                    cells[i].dataset.fill = fill;
+                    console.log('the fill is ' + fill);
+                    if (!fill === current_player) {
+                        console.log("P2's fill is " + fill);
+                        play_tone('explode');
+                    }
+                }
+                fill === undefined ? no() : place_selection(fill);
+
                 innerText === undefined ? no() : cells[i].innerText = innerText;
 
                 update_scoreboard();
@@ -770,10 +801,11 @@ function unsubscribe_all() {
 
 // Sounds
 
-const tone_p1_select = new Audio('assets/sounds/p1_select.mp3');
-const tone_p2_select = new Audio('assets/sounds/p2_select.mp3');
-const tone_explode = new Audio('assets/sounds/explode.mp3');
-const tone_win = new Audio('assets/sounds/win.mp3');
+
+function play_tone(target) {
+    const new_audio = new Audio(`assets/sounds/${target}.mp3`);
+    new_audio.play();
+}
 
 // TASKS
 
