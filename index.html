@@ -93,11 +93,13 @@
                 <select id="timer_input">
                     <option value="null">Select</option>
     
-                    <option value="10">0:10 [DEV]</option>
-                    <option value="45">0:45</option>
+                    <option value="15">0:15 [DEV]</option>
                     <option value="60">1:00</option>
                     <option value="90">1:30</option>
                     <option value="120">2:00</option>
+                    <option value="150">2:30</option>
+                    <option value="180">3:00</option>
+                    <option value="210">3:30</option>
                 </select>
                 <button class="warning" id="reset_board">Game</button>
                 <p class="warning">Wait until all players have joined to start!</p>
@@ -120,6 +122,7 @@
     <div id="modal">
         <div class="modal_common" id="modal_win">
             <h2 id="winner_status"></h2>
+            <button class="proceed close_modal">Okay</button>
         </div>
         <div class="modal_common" id="modal_bomb">
             <h2>Oh no a bomb!</h2>
@@ -129,7 +132,7 @@
         </div>
         <div class="modal_common" id="modal_dead">
             <h2>BOOM! You died... womp</h2>
-            <button class="proceed" id="close_modal">Okay</button>
+            <button class="proceed close_modal">Okay</button>
         </div>
         <div class="modal_common" id="modal_intro">
             <h2>Instructions:</h2>
