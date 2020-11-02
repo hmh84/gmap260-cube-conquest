@@ -321,7 +321,7 @@ button.warning:hover {
     content: " Won! 👑";
 }
 
-/*help modal*/
+/* Intro Modal */
 #modal_intro {
 	align-items: flex-start;
 	justify-content: flex-start;
@@ -333,10 +333,19 @@ button.warning:hover {
 }
 
 #modal_intro h2 {
-	font-weight: 700;
+    font-size: 1.5rem;
+	font-weight: bold;
 	color: var(--green);
 }
-	
+
+#modal_intro p {
+	line-height: 1.5rem;
+}
+
+button#hide_intro {
+    margin: 0 auto;
+}
+
 /* Hover States */
 
 button, option {

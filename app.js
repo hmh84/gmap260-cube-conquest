@@ -55,7 +55,7 @@ function toggle_modal(new_modal) {
 };
 
 const disarm = document.querySelector('#disarm');
-const close_modal = document.querySelector('#close_modal');
+const close_modal = document.querySelectorAll('.close_modal');
 
 disarm.addEventListener('click', (e) => {
     e.preventDefault();
@@ -79,16 +79,19 @@ function arm_bomb(cell) {
 
 function kill_player(cell) {
     window.dead = true;
+    tone_explode.play();
     cell.dataset.fill = 'black';
     cell.innerText = '☠️ ' + current_player;
     push_death_innerText(cell.dataset.index);
     push_death(current_player);
 }
 
-close_modal.addEventListener('click', (e) => {
-    e.preventDefault();
-    toggle_modal('close');
-})
+close_modal.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggle_modal('close');
+    })
+});
 
 // ====================
 // FORMS
@@ -214,6 +217,7 @@ function add_cells() {
 function index_cells() {
     for (i = 0; i < cells.length; i++) {
         cells[i].dataset.index = i;
+        cells[i].innerText = i;
         push_indexes(cells[i]); // Send index to DB
     }
 }
@@ -222,24 +226,27 @@ function resize_board() {
     const x = Math.sqrt(cell_qty).toFixed(0); // Rounded SquareRoot of cell quantity
 
     const style = document.createElement('style');
-    style.innerHTML = `.cell { width: calc(100% / ${x}); }`;
+    style.innerHTML = `.cell { width: calc(100% / ${x}); height: calc(80vh / ${x}); }`;
     document.head.appendChild(style); // Append style to DOM
 }
 
 const wait_to_move = document.querySelector('#wait_to_move');
 
-window.block_player = false;
+window.block_player = false; // Init
+
 function fill_cell(cell) {
+    // if (!cell.dataset.fill && !dead && !block_player && !time_block && check_adjacent(cell)) {
     if (!cell.dataset.fill && !dead && !block_player && !time_block) {
+        tone_p1_select.play();
         window.block_player = true;
 
-        wait_to_move.style.display = 'flex';
+        wait_to_move.style.opacity = '1';
         wait_to_move.innerText = '2s';
         setTimeout(function () {
             wait_to_move.innerText = '1s';
         }, 1000);
         setTimeout(function () {
-            wait_to_move.style.display = 'none';
+            wait_to_move.style.opacity = '0';
             window.block_player = false;
         }, 2000);
 
@@ -251,6 +258,34 @@ function fill_cell(cell) {
             arm_bomb(cell);
         }
     }
+}
+
+function check_adjacent(cell) {
+    const cells = document.querySelectorAll('.cell');
+    const x = parseInt(Math.sqrt(cells.length).toFixed(0));
+    const cur_index = parseInt(cell.dataset.index);
+
+    const adj_cells = [
+        top = {
+            obj: cells[cur_index - x],
+        },
+        right = {
+            obj: cells[cur_index + 1],
+        },
+        bottom = {
+            obj: cells[cur_index + x],
+        },
+        left = {
+            obj: cells[cur_index - 1],
+        },
+    ];
+
+    adj_cells.forEach(c => { // If in bounds & is current players color
+        if ((c.obj) && (c.obj.dataset.fill === current_player)) {
+            console.log('true');
+            return true;
+        }
+    });
 }
 
 function load_bombs() {
@@ -292,19 +327,14 @@ function add_event_listeners() {
 function sync_game(sync_time, game_timer) {
     const host_sync = parseInt(format_tstamp(sync_time));
     const start_time = host_sync + 5; // 5 Second delay
-    const end_time = start_time + parseInt(game_timer);
-
-    console.log('game_timer = ' + game_timer);
-    console.log('host_sync = ' + host_sync);
-    console.log('start_time = ' + start_time);
-    console.log('end_time = ' + end_time);
+    const end_time = start_time + seconds_convert(game_timer);
 
     (function () {
         // Sync Game
         var check_time = function () {
             const current = parseInt(format_tstamp(timestamp()));
             const time_diff = start_time - current;
-            timer.style.display = 'flex';
+            timer.style.opacity = '1';
             timer.innerText = 'Match Starts in ' + time_diff + 's';
 
             if (current >= start_time) { // Start time
@@ -321,15 +351,14 @@ function sync_game(sync_time, game_timer) {
         var s = setInterval(check_time, 100); // Start it right away, check every 1/10s
 
         // Set Countdown
+        let countdown_time = game_timer;
         var countdown = function () {
             const current = parseInt(format_tstamp(timestamp()));
-            const time_diff = end_time - current;
+            // const time_diff = end_time - current;
 
-            console.log('current = ' + current);
-            console.log('end_time = ' + end_time);
-            console.log('start_time = ' + start_time);
+            countdown_time = countdown_time - 1;
 
-            timer.innerText = 'Time Remaining: ' + time_diff + 's';
+            timer.innerText = 'Time Remaining: ' + countdown_time + 's';
 
             if (current >= end_time) { // Start time
                 clearInterval(c_rep);
@@ -343,9 +372,13 @@ function sync_game(sync_time, game_timer) {
     })();
 }
 
-// Start time = 22640
-// End time   = 2264045
-// Time Diff  = 2241405
+function seconds_convert(total_seconds) {
+    var m = Math.floor(total_seconds / 60);
+    var s = total_seconds - m * 60;
+    var seconds = ("0" + s).slice(-2);
+
+    return parseInt("" + m + seconds);
+}
 
 // ===== Server Side Setup =====
 
@@ -519,6 +552,7 @@ function check_for_win(scores) {
 function declare_win() {
     const winner = Math.max.apply(Math, scores.map(function (o) { return o.count; }));
     console.log('Win: ' + winner);
+    tone_win.play();
     // Display winner name
     toggle_modal('modal_win');
     winner_status.innerText = winner;
@@ -547,7 +581,7 @@ function reset_scores() {
 }
 
 function push_scores() {
-    for (i = 0; i < scores.length; i++) {
+    for (i = 0; i < 4; i++) {
         const player = scores[i].name.toLowerCase();
         docRef = db.collection('sessions').doc(current_session).collection('scores').doc(player);
 
@@ -575,18 +609,19 @@ window.time_block = true; // Init
 
 function player_init_game() {
     var r_x = 0;
-    db.collection("sessions").doc(current_session).collection('ready').doc('ready')
-        .onSnapshot(function (doc) {
-            r_x++;
-            if (r_x > 1) { // After 2nd snapshot
-                console.log('I hear a reset!');
-                game_status.style.display = 'none';
-                table.innerText = '' // Deletes table
-                pull_board();
-                // pull_scores();
-                // grab new timer?
-            }
-        });
+    const docRef = db.collection("sessions").doc(current_session).collection('ready').doc('ready');
+
+    const snapshot_ready = docRef.onSnapshot(function (doc) {
+        r_x++;
+        if (r_x > 1) { // After 2nd snapshot
+            unsubscribe_all();
+            toggle_modal('close');
+            console.log('I hear a reset!');
+            game_status.style.display = 'none';
+            table.innerText = '' // Deletes table
+            pull_board();
+        }
+    });
 }
 
 function pull_board() {
@@ -671,43 +706,43 @@ function local_build_cell(i, index, bomb, fill, innerText) {
 // ===== Intra-Game Snapshot Listeners =====
 
 function add_cell_snapshot(i) {
+    const docRef = db.collection("sessions").doc(current_session).collection('cells').doc(`${i}`);
     var r_x = 0;
-    db.collection("sessions").doc(current_session).collection('cells').doc(`${i}`)
-        .onSnapshot(function (doc) {
-            //do stuff
-            r_x++;
+    const snapshot_cells = docRef.onSnapshot(function (doc) {
+        //do stuff
+        r_x++;
 
-            if (r_x > 1) { // After 2nd snapshot
-                const docRef = db.collection("sessions").doc(current_session).collection('cells').doc(`${i}`);
+        if (r_x > 1) { // After 2nd snapshot
+            const docRef = db.collection("sessions").doc(current_session).collection('cells').doc(`${i}`);
 
-                docRef.get().then(function (doc) {
-                    window.cells = document.querySelectorAll('.cell');
-                    const result = doc.data();
+            docRef.get().then(function (doc) {
+                window.cells = document.querySelectorAll('.cell');
+                const result = doc.data();
 
-                    const fill = result.fill;
-                    const innerText = result.innerText;
+                const fill = result.fill;
+                const innerText = result.innerText;
 
-                    fill === undefined ? no() : cells[i].dataset.fill = fill;
-                    innerText === undefined ? no() : cells[i].innerText = innerText;
+                fill === undefined ? no() : cells[i].dataset.fill = fill;
+                innerText === undefined ? no() : cells[i].innerText = innerText;
 
-                    update_scoreboard();
+                update_scoreboard();
 
-                }).catch(function (error) {
-                    console.log("Error getting document:", error);
-                });
-            }
+            }).catch(function (error) {
+                console.log("Error getting document:", error);
+            });
+        }
 
-        });
+    });
 }
 
 function add_score_snapshot_listeners() {
     for (i = 0; i < scores.length; i++) {
         const player = scores[i].name.toLowerCase();
-        const docRef = db.collection("sessions").doc(current_session).collection('scores').doc(player);
         window.death_count = 0; // Reset
 
-        docRef.onSnapshot(function (doc) {
+        const docRef = db.collection("sessions").doc(current_session).collection('scores').doc(player);
 
+        const snapshot_scores = docRef.onSnapshot(function (doc) {
             docRef.get().then(function (doc) {
                 if (doc.exists) {
                     const result = doc.data();
@@ -728,13 +763,25 @@ function add_score_snapshot_listeners() {
     }
 }
 
+function unsubscribe_all() {
+    typeof snapshot_cells != "undefined" && snapshot_cells();
+    typeof snapshot_scores != "undefined" && snapshot_scores();
+}
+
+// Sounds
+
+const tone_p1_select = new Audio('assets/sounds/p1_select.mp3');
+const tone_p2_select = new Audio('assets/sounds/p2_select.mp3');
+const tone_explode = new Audio('assets/sounds/explode.mp3');
+const tone_win = new Audio('assets/sounds/win.mp3');
+
 // TASKS
 
-// 3. Add timer
-// 10. If all players are dead the game ends
-// 4. Decipher winner name instead of score
-// 5. Only allow movement in NSEW directions
-// 6. SFX
-// 7. Add actual mini-game to death modal
-// 8. Change score after death
-// 9. Fix host controls not fitting on iPad
+// 1. Spend points after bomb defusal
+// 2. If all players are dead the game ends
+// 3. Decipher winner name instead of score
+// 4. Only allow movement in NSEW directions
+// 5. SFX
+// 6. Add actual mini-game to death modal
+// 7. Change score after death
+// 8. Fix host controls not fitting on iPad
