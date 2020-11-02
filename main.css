@@ -272,12 +272,12 @@ button.warning:hover {
     left: 0;
     width: 100vw;
     height: 100vh;
-
     display: none;
-    justify-content: center;
     align-items: center;
+	 justify-content: center;
     background-color: #00000080;
     z-index: 10;
+	 overflow: scroll;
 }
 
 .modal_open {
@@ -321,6 +321,22 @@ button.warning:hover {
     content: " Won! 👑";
 }
 
+/*help modal*/
+#modal_intro {
+	align-items: flex-start;
+	justify-content: flex-start;
+	width: 90%;
+	max-width: 700px;
+	height: 400px;
+	max-height: 90%;
+	overflow: scroll;
+}
+
+#modal_intro h2 {
+	font-weight: 700;
+	color: var(--green);
+}
+	
 /* Hover States */
 
 button, option {
