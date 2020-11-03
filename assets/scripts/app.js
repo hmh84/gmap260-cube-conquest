@@ -31,12 +31,18 @@ function no() {
     // do nothing
 }
 
+const snapshots = [];
+
 function timestamp() { // Returns the current timestamp, Usage: "console.log(timestamp());"
     return firebase.firestore.Timestamp.fromDate(new Date());
 }
 
 function format_tstamp(tstamp) { // Formats moment.js timestamp into cleaner format
     return moment(tstamp.toDate()).format("hhmmss");
+}
+
+function ms_format_tstamp(tstamp) { // Formats moment.js timestamp into cleaner format
+    return moment(tstamp.toDate()).format("hhmmssS");
 }
 
 const modal = document.querySelector('#modal');
@@ -349,20 +355,24 @@ function add_event_listeners() {
 }
 
 function sync_game(sync_time, game_timer) {
-    const host_sync = parseInt(format_tstamp(sync_time));
-    const start_time = host_sync + 5; // 5 Second delay
-    const end_time = start_time + seconds_convert(game_timer);
+    const host_sync = parseInt(ms_format_tstamp(sync_time));
+    const start_time = host_sync + 50; // 5 Second delay
 
     (function () {
         // Sync Game
-        var check_time = function () {
-            const current = parseInt(format_tstamp(timestamp()));
+        const check_time = function () {
+            const current = parseInt(ms_format_tstamp(timestamp()));
             const time_diff = start_time - current;
+            display_timer = Math.round(time_diff / 10);
+
             timer.style.opacity = '1';
-            timer.innerText = 'Match Starts in ' + time_diff + 's';
+            timer.innerText = 'Match Starts in ' + display_timer + 's';
 
+            if (time_diff === 30 || time_diff === 20 || time_diff === 10) {
+                play_tone('countdown');
+            }
 
-            if (current >= start_time) { // Start time
+            if (time_diff >= 0) { // Start time
                 clearInterval(s); // End Sync Checks
                 update_scoreboard();
                 timer.innerText = 'Go!';
@@ -376,26 +386,10 @@ function sync_game(sync_time, game_timer) {
 
         var s = setInterval(check_time, 100); // Start it right away, check every 1/10s
 
-        var tone_checks = function () {
-            const current = parseInt(format_tstamp(timestamp()));
-            const time_diff = start_time - current;
-
-            if (time_diff === 3 || time_diff === 2 || time_diff === 1) {
-                play_tone('countdown');
-            }
-            console.log('Time Diff = ' + time_diff);
-            current >= start_time && clearInterval(t_check); // End Tone Checks
-        }
-
-        var t_check = setInterval(tone_checks, 1000); // Start it right away, check every 1s
-
         // Set Countdown
         let countdown_time = game_timer;
-        var countdown = function () {
-            const current = parseInt(format_tstamp(timestamp()));
-            // const time_diff = end_time - current;
-
-            countdown_time = countdown_time - 1;
+        const countdown = function () {
+            countdown_time--;
 
             timer.innerText = 'Time Remaining: ' + countdown_time + 's';
 
@@ -403,7 +397,7 @@ function sync_game(sync_time, game_timer) {
                 play_tone('countdown');
             }
 
-            if (current >= end_time) { // Start time
+            if (countdown_time <= 0) { // Start time
                 clearInterval(c_check);
                 timer.innerText = 'Time!';
                 window.time_block = true;
@@ -413,14 +407,6 @@ function sync_game(sync_time, game_timer) {
             }
         };
     })();
-}
-
-function seconds_convert(total_seconds) {
-    var m = Math.floor(total_seconds / 60);
-    var s = total_seconds - m * 60;
-    var seconds = ("0" + s).slice(-2);
-
-    return parseInt("" + m + seconds);
 }
 
 // ===== Server Side Setup =====
@@ -826,6 +812,7 @@ function add_cell_snapshot(i) {
         }
 
     });
+    snapshots.push(snapshot_cells);
 }
 
 function add_score_snapshot_listeners() {
@@ -853,6 +840,7 @@ function add_score_snapshot_listeners() {
             });
 
         });
+        snapshots.push(snapshot_scores);
     }
 }
 
