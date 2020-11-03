@@ -68,10 +68,11 @@ main > *:last-of-type {
 .cell:hover {
     background-color: rgb(219, 219, 219);
     cursor: pointer;
+    cursor: url('../graphics/flag.png'), auto;
 }
 
 .cell[data-fill]:hover {
-    cursor: not-allowed;
+    cursor: url('../graphics/swords.png'), auto;
 }
 
 .cell[data-fill="red"] {
@@ -443,7 +444,7 @@ option:hover {
     font-family: FontAwesome; font-weight: 400; content: "\f017  ";
 }
 
-#status_bar > *, #host_form, #scoreboard, button {
+#host_form, #scoreboard, button {
     box-shadow: -2px 2px 4px #c5c5c5;
 }
 
