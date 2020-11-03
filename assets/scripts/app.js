@@ -149,6 +149,7 @@ login_button.addEventListener('click', (e) => {
             host_controls.style.display = 'flex';
             reset_board.addEventListener('click', (e) => {
                 e.preventDefault();
+                reset_board.disabled = true;
                 table.innerText = '' // Deletes table
                 host_init_game();
             })
@@ -205,6 +206,7 @@ function host_init_game() {
                                     scoreboard.style.display = 'flex';
                                     loading.style.display = 'none';
                                     window.dead = false;
+                                    reset_board.disabled = false;
                                     // add_score_snapshot_listeners();
                                     // host_controls.style.display = 'flex'; // Maybe not
                                 }, 1000);
@@ -629,13 +631,23 @@ function declare_win() {
 }
 
 function flash_v1(color) {
-    winner_status.style.color = color;
-    modal_win.style.backgroundColor = 'white';
+    if (color === 'yellow') {
+        winner_status.style.color = color;
+        modal_win.style.backgroundColor = 'black';
+    } else {
+        winner_status.style.color = color;
+        modal_win.style.backgroundColor = 'white';
+    }
 }
 
 function flash_v2(color) {
-    modal_win.style.backgroundColor = color;
-    winner_status.style.color = 'white';
+    if (color === 'yellow') {
+        modal_win.style.backgroundColor = color;
+        winner_status.style.color = 'black';
+    } else {
+        modal_win.style.backgroundColor = color;
+        winner_status.style.color = 'white';
+    }
 }
 
 function win_effect(color) {

@@ -219,6 +219,17 @@ button.proceed:hover {
     background-color: white;
 }
 
+button[disabled] {
+    filter: grayscale(1);
+    opacity: .5;
+}
+
+button[disabled]:hover {
+    cursor: not-allowed;
+    color: white !important;
+    background-color: var(--green);
+}
+
 /* Select & Options */
 
 select {
@@ -286,10 +297,10 @@ button.warning:hover {
     height: 100vh;
     display: none;
     align-items: center;
-	 justify-content: center;
+	justify-content: center;
     background-color: #00000080;
     z-index: 10;
-	 overflow: scroll;
+	overflow: scroll;
 }
 
 .modal_open {
