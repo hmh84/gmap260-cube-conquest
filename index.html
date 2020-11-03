@@ -35,14 +35,10 @@
         </div>
         <form class="prompt_form" id="login_form">
             <h1>Welcome to Cube Conquest!</h1>
-
             <div class="row">
-
                 <div class="column">
                     <p>Game Room</p>
                     <select id="session_input" size="4">
-                        <!-- <option value="null">Select</option> -->
-
                         <option value="1">Room 1</option>
                         <option value="2">Room 2</option>
                         <option value="3">Room 3</option>
@@ -53,8 +49,6 @@
                 <div class="column">
                     <p>Role</p>
                     <select id="role_input" size="4">
-                        <!-- <option value="null">Select</option> -->
-
                         <option value="player">Player</option>
                         <option value="host">Host</option>
                     </select>
@@ -63,26 +57,23 @@
                 <div class="column">
                     <p>Player</p>
                     <select id="player_input" size="4">
-                        <!-- <option value="null">Select</option> -->
-
                         <option value="red">Red</option>
                         <option value="green">Green</option>
                         <option value="blue">Blue</option>
                         <option value="yellow">Yellow</option>
                     </select>
                 </div>
-
-
             </div>
 
             <button class="proceed" id="login_button">Join game</button>
         </form>
-        <h1 id="game_status">Waiting for host to start game...</h1>
+        <h1 id="game_status"><!-- Status populates here --></h1>
         <div id="table">
-            <!-- populate cells here -->
+            <!-- Plots populate here -->
         </div>
         <div id="host_controls">
             <form class="prompt_form" id="host_form">
+                <h1 id="host_controls_title">Game Settings</h1>
                 <h2>Select Board Size</h2>
                 <select id="table_size_input">
                     <option value="null">Select</option>
@@ -114,7 +105,7 @@
                 2s
             </div>
             <div id="timer">
-                <!-- Time populated here -->
+                <!-- Time populates here -->
             </div>
             <button id="intro_button">?</button>
             <div id="loading">

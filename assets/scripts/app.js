@@ -109,6 +109,7 @@ const host_controls = document.querySelector('#host_controls');
 const reset_board = document.querySelector('#reset_board');
 
 const game_status = document.querySelector('#game_status');
+const host_controls_title = document.querySelector('#host_controls_title');
 
 const table = document.querySelector('#table');
 const scoreboard = document.querySelector('#scoreboard');
@@ -116,12 +117,15 @@ const timer = document.querySelector('#timer');
 const loading = document.querySelector('#loading');
 const progress = document.querySelector('#progress');
 
+const title = document.querySelector('title');
+
 login_button.addEventListener('click', (e) => {
     e.preventDefault();
 
     // Check validity
 
     if (!(session_input.value == 'null' || player_input.value == 'null' || role_input.value == 'null')) {
+        title.innerText += ` - Room ${session_input.value}`;
         login_form.style.display = 'none';
 
         window.current_session = session_input.value;
@@ -130,6 +134,7 @@ login_button.addEventListener('click', (e) => {
         window.current_role = role_input.value;
 
         if (current_role === 'host') {
+            host_controls_title.innerText += ` for Room #${session_input.value}`;
             host_controls.style.display = 'flex';
             reset_board.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -138,6 +143,7 @@ login_button.addEventListener('click', (e) => {
             })
         } else if (current_role === 'player') {
             game_status.style.display = 'block';
+            game_status.innerText = `Waiting for host to start in Room #${session_input.value}...`;
             player_init_game();
         }
     } else {
