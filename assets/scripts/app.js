@@ -93,7 +93,7 @@ function kill_player(cell) {
     play_tone('explode');
     cell.dataset.fill = 'black';
     cell.innerText = '☠️ ' + current_player;
-    push_death_innerText(cell.dataset.index);
+    push_death_plot(cell.dataset.index);
     push_death(current_player);
 }
 
@@ -207,7 +207,7 @@ function host_init_game() {
                                     loading.style.display = 'none';
                                     window.dead = false;
                                     reset_board.disabled = false;
-                                    // add_score_snapshot_listeners();
+                                    add_death_snapshot_listener();
                                     // host_controls.style.display = 'flex'; // Maybe not
                                 }, 1000);
 
@@ -504,11 +504,12 @@ function push_diffuse(cell) { // UPDATE Method
     });
 }
 
-function push_death_innerText(index) { // UPDATE Method
+function push_death_plot(index) { // UPDATE Method
     docRef = db.collection('sessions').doc(current_session).collection('cells').doc(index);
 
     const data = { // Create data
         innerText: '☠️ ' + current_player,
+        fill: 'black',
     };
 
     docRef.update(data).then(function () { // Push data to DB
@@ -767,7 +768,7 @@ function pull_cell_count() {
                     window.cell_qty = cell_count; // Amount of cells to be displayed
                     resize_board();
                     loading.style.display = 'flex';
-                    // add_score_snapshot_listeners();
+                    add_death_snapshot_listener();
                 }
             }
         } else {
@@ -864,10 +865,10 @@ function add_cell_snapshot(i) {
     snapshots.push(snapshot_cells);
 }
 
-function add_score_snapshot_listeners() {
+function add_death_snapshot_listener() {
+    let death_count = 0; // Reset
     for (i = 0; i < scores.length; i++) {
         const player = scores[i].name.toLowerCase();
-        window.death_count = 0; // Reset
 
         const docRef = db.collection("sessions").doc(current_session).collection('scores').doc(player);
 
@@ -877,9 +878,12 @@ function add_score_snapshot_listeners() {
                     const result = doc.data();
 
                     const dead = result.dead;
-                    dead && window.death_count++;
+                    dead && death_count++;
 
-                    console.log(death_count);
+                    if (death_count === (scores.length - 1)) { // If all but 1 died
+                        // declare_win();
+                        // Only works for host so far..
+                    }
                 } else {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
