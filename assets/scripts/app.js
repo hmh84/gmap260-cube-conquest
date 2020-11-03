@@ -45,6 +45,14 @@ function ms_format_tstamp(tstamp) { // Formats moment.js timestamp into cleaner 
     return moment(tstamp.toDate()).format("hhmmssS");
 }
 
+function seconds_convert(total_seconds) {
+    var m = Math.floor(total_seconds / 60);
+    var s = total_seconds - m * 60;
+    var seconds = ("0" + s).slice(-2);
+
+    return parseInt("" + m + seconds);
+}
+
 const modal = document.querySelector('#modal');
 const all_modals = document.querySelectorAll('.modal_common');
 
@@ -75,6 +83,7 @@ function arm_bomb(cell) {
     disarm.addEventListener('click', (e) => {
         e.preventDefault();
         cell.dataset.bomb = false;
+        push_diffuse(cell);
         toggle_modal('close');
     });
 }
@@ -268,7 +277,6 @@ function fill_cell(cell) {
         console.log('filling...');
         cell.dataset.fill = current_player;
         push_selection(cell);
-        update_scoreboard();
     }
 }
 
@@ -355,8 +363,14 @@ function add_event_listeners() {
 }
 
 function sync_game(sync_time, game_timer) {
+    console.log('Syncing game...');
+
+    const n_host_sync = parseInt(format_tstamp(sync_time));
+    const n_start_time = n_host_sync + 5; // 5 Second delay for loading
+    const n_end_time = n_start_time + seconds_convert(game_timer);
+
     const host_sync = parseInt(ms_format_tstamp(sync_time));
-    const start_time = host_sync + 50; // 5 Second delay
+    const start_time = host_sync + 50; // 5 Second delay for loading
 
     (function () {
         // Sync Game
@@ -372,8 +386,8 @@ function sync_game(sync_time, game_timer) {
                 play_tone('countdown');
             }
 
-            if (time_diff >= 0) { // Start time
-                clearInterval(s); // End Sync Checks
+            if (current >= start_time) { // Start time
+                clearInterval(s_check); // End Sync Checks
                 update_scoreboard();
                 timer.innerText = 'Go!';
                 play_tone('start');
@@ -384,11 +398,12 @@ function sync_game(sync_time, game_timer) {
             }
         };
 
-        var s = setInterval(check_time, 100); // Start it right away, check every 1/10s
+        window.s_check = setInterval(check_time, 100); // Start it right away, check every 1/10s
 
         // Set Countdown
         let countdown_time = game_timer;
         const countdown = function () {
+            const current = parseInt(format_tstamp(timestamp()));
             countdown_time--;
 
             timer.innerText = 'Time Remaining: ' + countdown_time + 's';
@@ -397,7 +412,7 @@ function sync_game(sync_time, game_timer) {
                 play_tone('countdown');
             }
 
-            if (countdown_time <= 0) { // Start time
+            if (current >= n_end_time) { // Start time
                 clearInterval(c_check);
                 timer.innerText = 'Time!';
                 window.time_block = true;
@@ -462,12 +477,26 @@ function push_selection(cell) { // UPDATE Method
 
     const data = { // Create data
         fill: current_player,
-        bomb: cell.dataset.bomb,
     };
 
     docRef.update(data).then(function () { // Push data to DB
         // do stuff after
         console.log('Pushed cell update to DB');
+    }).catch(function (error) {
+        console.error(error);
+    });
+}
+
+function push_diffuse(cell) { // UPDATE Method
+    docRef = db.collection('sessions').doc(current_session).collection('cells').doc(cell.dataset.index);
+
+    const data = { // Create data
+        bomb: cell.dataset.bomb,
+    };
+
+    docRef.update(data).then(function () { // Push data to DB
+        // do stuff after
+        console.log('Pushed bomb diffuse to DB');
     }).catch(function (error) {
         console.error(error);
     });
@@ -506,14 +535,15 @@ function push_death(current_player) {
 function send_ready_signal() { // SET Method
     docRef = db.collection('sessions').doc(current_session).collection('ready').doc('ready');
     var autoID = db.collection('sessions').doc().id;
+    const sync_tstamp = timestamp();
     const data = { // Create data
         status: autoID,
         cells: cells.length,
-        sync_time: timestamp(),
+        sync_time: sync_tstamp,
         game_timer: timer_input.value
     };
 
-    sync_game(timestamp(), timer_input.value) // Host game sync
+    sync_game(sync_tstamp, timer_input.value) // Host game sync
 
     docRef.set(data).then(function () { // Push data to DB
         // do stuff after
@@ -622,6 +652,12 @@ function win_effect(color) {
                     flash_v1(color);
                     setTimeout(function () {
                         flash_v2(color);
+                        setTimeout(function () {
+                            flash_v1(color);
+                            setTimeout(function () {
+                                flash_v2(color);
+                            }, flash_speed);
+                        }, flash_speed);
                     }, flash_speed);
                 }, flash_speed);
             }, flash_speed);
@@ -792,17 +828,18 @@ function add_cell_snapshot(i) {
 
                 const fill = result.fill;
                 const innerText = result.innerText;
+                const bomb = result.bomb;
 
                 function place_selection(fill) {
                     cells[i].dataset.fill = fill;
                     if (!fill === current_player) {
-                        console.log("P2's fill is " + fill);
                         play_tone('explode');
                     }
                 }
                 fill === undefined ? no() : place_selection(fill);
 
                 innerText === undefined ? no() : cells[i].innerText = innerText;
+                bomb === undefined ? no() : cells[i].dataset.bomb = bomb;
 
                 update_scoreboard();
 
@@ -845,12 +882,14 @@ function add_score_snapshot_listeners() {
 }
 
 function unsubscribe_all() {
-    typeof snapshot_cells != "undefined" && snapshot_cells();
-    typeof snapshot_scores != "undefined" && snapshot_scores();
+    console.log('Un-subing all snapshots...')
+    snapshots.forEach(s => {
+        s();
+    });
+    snapshots.length = 0; // Empty the array
 }
 
 // Sounds
-
 
 function play_tone(target) {
     const new_audio = new Audio(`assets/sounds/${target}.mp3`);

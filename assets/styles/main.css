@@ -215,7 +215,7 @@ button.proceed:hover {
 }
 
 #reset_board.red-btn:hover {
-    color: var(--red);
+    color: var(--red) !important;
     background-color: white;
 }
 
@@ -315,7 +315,8 @@ button.warning:hover {
 }
 
 #modal_win button {
-    display: none !important;
+    /* display: none !important; */
+    margin-bottom: 0 !important;
 }
 
 #modal_win * {
@@ -323,8 +324,7 @@ button.warning:hover {
 }
 
 #winner_status {
-    font-size: 1.75rem;
-    margin-bottom: 0 !important;
+    font-size: 2.25rem;
 }
 
 #winner_status::after {
