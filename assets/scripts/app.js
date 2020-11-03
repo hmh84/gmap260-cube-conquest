@@ -217,7 +217,7 @@ function add_cells() {
 function index_cells() {
     for (i = 0; i < cells.length; i++) {
         cells[i].dataset.index = i;
-        cells[i].innerText = i;
+        // cells[i].innerText = i;
         push_indexes(cells[i]); // Send index to DB
     }
 }
@@ -538,18 +538,22 @@ function update_scoreboard() {
         red = {
             name: 'Red',
             count: red_count,
+            display_name: 'Player 1'
         },
         green = {
             name: 'Green',
             count: green_count,
+            display_name: 'Player 2'
         },
         blue = {
             name: 'Blue',
             count: blue_count,
+            display_name: 'Player 3'
         },
         yellow = {
             name: 'Yellow',
             count: yellow_count,
+            display_name: 'Player 4'
         },
     ];
 
@@ -572,12 +576,12 @@ function check_for_win(scores) {
 }
 
 function declare_win() {
-    const winner = Math.max.apply(Math, scores.map(function (o) { return o.count; }));
-    console.log('Win: ' + winner);
+    const max = Math.max.apply(Math, scores.map(function (o) { return o.count; }));
+    const winner = scores.filter(function (o) { return (o.count == max); });
+
+    winner_status.innerText = winner[0].display_name;
     play_tone('win');
-    // Display winner name
     toggle_modal('modal_win');
-    winner_status.innerText = winner;
 }
 
 // ===== Server Side Scoreboard =====

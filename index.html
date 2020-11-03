@@ -19,7 +19,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="assets/styles/normalize.css">
     <link rel="stylesheet" href="assets/styles/main.css">
-    <title>GAME</title>
+    <title>Cube Conquest</title>
     <!-- Favicon -->
     <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
@@ -34,7 +34,7 @@
             <p class="score" id="yellow_score"></p>
         </div>
         <form class="prompt_form" id="login_form">
-            <h1>Welcome to GAME!</h1>
+            <h1>Welcome to Cube Conquest!</h1>
 
             <div class="row">
 
@@ -104,9 +104,8 @@
                     <option value="120">2:00</option>
                     <option value="150">2:30</option>
                     <option value="180">3:00</option>
-                    <option value="210">3:30</option>
                 </select>
-                <button class="warning" id="reset_board">Game</button>
+                <button class="proceed" id="reset_board">Game</button>
                 <p class="warning">Wait until all players have joined to start!</p>
             </form>
         </div>
@@ -131,17 +130,18 @@
         </div>
         <div class="modal_common" id="modal_bomb">
             <h2>Oh no a bomb!</h2>
-            <h1>💣</h1>
+            <img id="bomb_img" src="assets/graphics/bomb_3.png">
+            <p id="ticker_clock"></p>
             <button id="disarm">Disarm</button>
-            <button class="warning" id="kill">Don't disarm</button>
         </div>
         <div class="modal_common" id="modal_dead">
             <h2>BOOM! You died... womp</h2>
+            <img src="assets/graphics/bomb_0.png">
             <button class="proceed close_modal">Okay</button>
         </div>
         <div class="modal_common" id="modal_intro">
             <h2>Instructions:</h2>
-            <p>Welcome to the game! To start, pick your room, choose to be a player or a host, and claim a color.</p>
+            <p>Welcome to Cube Conquest! To start, pick your room, choose to be a player or a host, and claim a color.</p>
             <img src="assets/graphics/img1.png" alt="Three selectable lists, containing game rooms, then player or host, then color">
             <p>If you are a host, select a size for your game board and a time limit for the game. Wait until the other players have joined your room and start!</p>
             <img src="assets/graphics/img2.png" alt="host board size picker and timer picker as two dropdowns with a start button beneath">
