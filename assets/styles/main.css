@@ -314,12 +314,6 @@ button.warning:hover {
     margin-bottom: 0;
 }
 
-#modal_win {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
-}
-
 #modal_win button {
     display: none !important;
 }
@@ -380,25 +374,14 @@ option:hover {
     cursor: pointer;
 }
 
-@keyframes gradient {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
 /* Wait to move */
 
 #wait_to_move, #timer {
     /* position: fixed;
     bottom: 1rem;
     left: 1rem; */
-    background-color: whitesmoke;
+    background-color: black;
+    color: white;
     padding: 1rem;
     border-radius: .5rem;
     opacity: 0;

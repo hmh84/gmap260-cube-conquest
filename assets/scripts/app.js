@@ -54,26 +54,22 @@ function toggle_modal(new_modal) {
     }
 };
 
-const disarm = document.querySelector('#disarm');
 const close_modal = document.querySelectorAll('.close_modal');
 
-disarm.addEventListener('click', (e) => {
-    e.preventDefault();
-    toggle_modal('close');
-});
 
 function arm_bomb(cell) {
-    var old_e = document.querySelector('#kill');
+    // do stuff
+
+    // Re-init disarm
+    var old_e = document.querySelector('#disarm');
     var new_e = old_e.cloneNode(true);
     old_e.parentNode.replaceChild(new_e, old_e);
 
-    const kill = document.querySelector('#kill');
-    kill.addEventListener('click', (e) => {
+    const disarm = document.querySelector('#disarm');
+    disarm.addEventListener('click', (e) => {
         e.preventDefault();
-
-
-        kill_player(cell);
-        toggle_modal('modal_dead');
+        cell.dataset.bomb = false;
+        toggle_modal('close');
     });
 }
 
@@ -194,7 +190,7 @@ function host_init_game() {
                                     scoreboard.style.display = 'flex';
                                     loading.style.display = 'none';
                                     window.dead = false;
-                                    add_score_snapshot_listeners();
+                                    // add_score_snapshot_listeners();
                                     // host_controls.style.display = 'flex'; // Maybe not
                                 }, 1000);
 
@@ -223,6 +219,7 @@ function add_cells() {
 function index_cells() {
     for (i = 0; i < cells.length; i++) {
         cells[i].dataset.index = i;
+        cells[i].dataset.bomb = false;
         // cells[i].innerText = i;
         push_indexes(cells[i]); // Send index to DB
     }
@@ -238,35 +235,53 @@ function resize_board() {
 
 const wait_to_move = document.querySelector('#wait_to_move');
 
-window.block_player = false; // Init
+window.plot_claim_delay = false; // Init
 
 function fill_cell(cell) {
-    // if (!cell.dataset.fill && !dead && !block_player && !time_block && check_adjacent(cell)) {
-    if (!cell.dataset.fill && !dead && !block_player && !time_block) {
-        window.block_player = true;
+    if (!dead && !plot_claim_delay && !time_block) { // If not dead, no plot claim delay, and game timer has not run out
 
-        wait_to_move.style.opacity = '1';
-        wait_to_move.innerText = '2s';
-        setTimeout(function () {
-            wait_to_move.innerText = '1s';
-        }, 1000);
-        setTimeout(function () {
-            wait_to_move.style.opacity = '0';
-            window.block_player = false;
-        }, 2000);
-
+        console.log('b4 fill = ' + cell.dataset.fill);
+        console.log('TEST' + cell.dataset.fill === current_player);
+        if (cell.dataset.fill && !cell.dataset.fill === current_player) { // If selected cell is in enemy territory (filled but not yours)
+            add_plot_claim_delay('5'); // Slow them down more than usual
+            console.log('enemy territory...');
+        } else {
+            console.log('bomb status = ' + cell.dataset.bomb);
+            if (cell.dataset.bomb === 'true') { // If you find a bomb
+                console.log('found a bomb...');
+                add_plot_claim_delay('5');
+                toggle_modal('modal_bomb');
+                play_tone('uh-oh');
+                arm_bomb(cell);
+            } else { // Standard unfilled cell
+                console.log('no bomb, standard fill...');
+                add_plot_claim_delay('2');
+                play_tone('p1_select');
+            }
+        }
+        console.log('filling...');
         cell.dataset.fill = current_player;
         push_selection(cell);
         update_scoreboard();
-        if (cell.dataset.bomb) {
-            toggle_modal('modal_bomb');
-            play_tone('uh-oh');
-            arm_bomb(cell);
-            play_tone('uh-oh');
-        } else {
-            play_tone('p1_select');
-        }
     }
+}
+
+function add_plot_claim_delay(s) { // 1 parm (s) is # of seconds to delay the player
+    window.plot_claim_delay = true;
+    wait_to_move.style.opacity = '1';
+
+    // console.log('delay = ' + x);
+    wait_to_move.innerText = `${s}s`;
+    const check_time = function () {
+        s--
+        wait_to_move.innerText = `${s}s`;
+        if (s <= 0) { // End
+            clearInterval(b_check); // End Checks
+            window.plot_claim_delay = false;
+            wait_to_move.style.opacity = '0';
+        }
+    };
+    const b_check = setInterval(check_time, 1000); // Run every 1s
 }
 
 function check_adjacent(cell) {
@@ -353,7 +368,7 @@ function sync_game(sync_time, game_timer) {
                 timer.innerText = 'Go!';
                 play_tone('start');
                 window.time_block = false;
-                window.c_rep = setInterval(countdown, 1000) // Start Countdown
+                window.c_check = setInterval(countdown, 1000) // Start Countdown
             } else {
                 window.time_block = true;
             }
@@ -369,10 +384,10 @@ function sync_game(sync_time, game_timer) {
                 play_tone('countdown');
             }
             console.log('Time Diff = ' + time_diff);
-            current >= start_time && clearInterval(t_rep); // End Tone Checks
+            current >= start_time && clearInterval(t_check); // End Tone Checks
         }
 
-        var t_rep = setInterval(tone_checks, 1000); // Start it right away, check every 1s
+        var t_check = setInterval(tone_checks, 1000); // Start it right away, check every 1s
 
         // Set Countdown
         let countdown_time = game_timer;
@@ -389,7 +404,7 @@ function sync_game(sync_time, game_timer) {
             }
 
             if (current >= end_time) { // Start time
-                clearInterval(c_rep);
+                clearInterval(c_check);
                 timer.innerText = 'Time!';
                 window.time_block = true;
                 declare_win();
@@ -415,6 +430,7 @@ function push_indexes(cell) { // SET
 
     const data = { // Create data
         index: cell.dataset.index,
+        bomb: cell.dataset.bomb,
     };
 
     docRef.set(data).then(function () { // Push data to DB
@@ -460,6 +476,7 @@ function push_selection(cell) { // UPDATE Method
 
     const data = { // Create data
         fill: current_player,
+        bomb: cell.dataset.bomb,
     };
 
     docRef.update(data).then(function () { // Push data to DB
@@ -586,8 +603,44 @@ function declare_win() {
     const winner = scores.filter(function (o) { return (o.count == max); });
 
     winner_status.innerText = winner[0].display_name;
-    play_tone('win');
     toggle_modal('modal_win');
+    win_effect(winner[0].name.toLowerCase());
+
+    // End Countdown
+    clearInterval(c_check); // Countdown Check
+    timer.innerText = 'Game Ended!';
+    window.time_block = true;
+}
+
+function flash_v1(color) {
+    winner_status.style.color = color;
+    modal_win.style.backgroundColor = 'white';
+}
+
+function flash_v2(color) {
+    modal_win.style.backgroundColor = color;
+    winner_status.style.color = 'white';
+}
+
+function win_effect(color) {
+    play_tone('win');
+    const flash_speed = 175; // in ms
+    flash_v1(color);
+    setTimeout(function () {
+        flash_v2(color);
+        setTimeout(function () {
+            flash_v1(color);
+            setTimeout(function () {
+                flash_v2(color);
+                setTimeout(function () {
+                    flash_v1(color);
+                    setTimeout(function () {
+                        flash_v2(color);
+                    }, flash_speed);
+                }, flash_speed);
+            }, flash_speed);
+        }, flash_speed);
+    }, flash_speed);
 }
 
 // ===== Server Side Scoreboard =====
@@ -680,7 +733,7 @@ function pull_cell_count() {
                     window.cell_qty = cell_count; // Amount of cells to be displayed
                     resize_board();
                     loading.style.display = 'flex';
-                    add_score_snapshot_listeners();
+                    // add_score_snapshot_listeners();
                 }
             }
         } else {
@@ -756,7 +809,6 @@ function add_cell_snapshot(i) {
 
                 function place_selection(fill) {
                     cells[i].dataset.fill = fill;
-                    console.log('the fill is ' + fill);
                     if (!fill === current_player) {
                         console.log("P2's fill is " + fill);
                         play_tone('explode');
