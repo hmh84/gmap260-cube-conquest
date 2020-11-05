@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
-
 * {
     font-family: 'Open Sans', sans-serif;
     /* color: #7e7e7e; */
@@ -29,11 +28,11 @@ main {
     width: 100%;
 }
 
-main > * {
+main>* {
     margin-bottom: 1rem;
 }
 
-main > *:last-of-type {
+main>*:last-of-type {
     margin-bottom: 0;
 }
 
@@ -41,13 +40,11 @@ main > *:last-of-type {
     flex-wrap: wrap;
     width: 100%;
     height: fit-content;
-    
     display: inline-grid;
     display: none;
     grid-template-columns: 50px 50px 50px 50px;
     border-bottom: 3px solid black;
     border-left: 3px solid black;
-
     /* max-height: 80vh; */
 }
 
@@ -58,7 +55,6 @@ main > *:last-of-type {
     justify-content: center;
     align-items: center;
     text-transform: capitalize;
-
     padding: 15px;
     text-align: center;
     border-top: 3px solid black;
@@ -96,6 +92,7 @@ main > *:last-of-type {
     color: white;
 }
 
+
 /* Scoreboard */
 
 #scoreboard {
@@ -118,12 +115,15 @@ main > *:last-of-type {
 #red_score {
     color: red;
 }
+
 #green_score {
     color: var(--green);
 }
+
 #blue_score {
     color: blue;
 }
+
 #yellow_score {
     color: yellow;
 }
@@ -131,12 +131,15 @@ main > *:last-of-type {
 #red_score::before {
     content: 'Player 1: ';
 }
+
 #green_score::before {
     content: 'Player 2: ';
 }
+
 #blue_score::before {
     content: 'Player 3: ';
 }
+
 #yellow_score::before {
     content: 'Player 4: ';
 }
@@ -145,6 +148,7 @@ main > *:last-of-type {
     border: 2px solid white;
     border-radius: .5rem;
 }
+
 
 /* FORM */
 
@@ -195,7 +199,9 @@ button {
 }
 
 button.proceed::after {
-    font-family: FontAwesome; font-weight: 400; content: " \f061";
+    font-family: FontAwesome;
+    font-weight: 400;
+    content: " \f061";
 }
 
 button.proceed:hover {
@@ -231,6 +237,7 @@ button[disabled]:hover {
     background-color: var(--green);
 }
 
+
 /* Select & Options */
 
 select {
@@ -248,8 +255,11 @@ option:checked {
 }
 
 option:checked::before {
-    font-family: FontAwesome; font-weight: 400; content: "\f178  ";
+    font-family: FontAwesome;
+    font-weight: 400;
+    content: "\f178  ";
 }
+
 
 /* Other Menus */
 
@@ -288,6 +298,7 @@ button.warning:hover {
     background-color: none;
 }
 
+
 /* Modals */
 
 #modal {
@@ -298,10 +309,10 @@ button.warning:hover {
     height: 100vh;
     display: none;
     align-items: center;
-	justify-content: center;
+    justify-content: center;
     background-color: #00000080;
     z-index: 10;
-	overflow: scroll;
+    overflow: scroll;
 }
 
 .modal_open {
@@ -318,11 +329,11 @@ button.warning:hover {
     border-radius: .5rem;
 }
 
-.modal_common > * {
+.modal_common>* {
     margin-bottom: 1rem !important;
 }
 
-.modal_common > *:last-of-type {
+.modal_common>*:last-of-type {
     margin-bottom: 0;
 }
 
@@ -343,34 +354,38 @@ button.warning:hover {
     content: " Wins! 👑";
 }
 
+
 /* Intro Modal */
+
 #modal_intro {
-	align-items: flex-start;
-	justify-content: flex-start;
-	width: 90%;
-	max-width: 700px;
-	height: 400px;
-	max-height: 90%;
-	overflow: scroll;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 90%;
+    max-width: 700px;
+    height: 400px;
+    max-height: 90%;
+    overflow: scroll;
 }
 
 #modal_intro h2 {
     font-size: 1.5rem;
-	font-weight: bold;
-	color: var(--green);
+    font-weight: bold;
+    color: var(--green);
 }
 
 #modal_intro p {
-	line-height: 1.5rem;
+    line-height: 1.5rem;
 }
 
 button#hide_intro {
     margin: 0 auto;
 }
 
+
 /* Hover States */
 
-button, option {
+button,
+option {
     transition: all .2s ease-in-out;
     -webkit-transition: all .2s ease-in-out;
 }
@@ -386,9 +401,11 @@ option:hover {
     cursor: pointer;
 }
 
+
 /* Wait to move */
 
-#wait_to_move, #timer {
+#wait_to_move,
+#timer {
     /* position: fixed;
     bottom: 1rem;
     left: 1rem; */
@@ -400,7 +417,9 @@ option:hover {
 }
 
 #wait_to_move::before {
-    font-family: FontAwesome; font-weight: 400; content: " \f017  ";
+    font-family: FontAwesome;
+    font-weight: 400;
+    content: " \f017  ";
 }
 
 #status_bar {
@@ -441,13 +460,48 @@ option:hover {
 }
 
 #timer::before {
-    font-family: FontAwesome; font-weight: 400; content: "\f017  ";
+    font-family: FontAwesome;
+    font-weight: 400;
+    content: "\f017  ";
 }
 
-#host_form, #scoreboard, button {
+#host_form,
+#scoreboard,
+button {
     box-shadow: -2px 2px 4px #c5c5c5;
 }
 
 .modal_common {
     box-shadow: -2px 2px 4px #313131;
+}
+
+#game_intro {
+    background-color: whitesmoke;
+    border-radius: 1rem;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    max-width: 45rem;
+}
+
+.intro_title {
+    color: var(--green);
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+#game_intro img {
+    margin: auto;
+    margin-bottom: 1rem !important;
+    max-width: 60%;
+    border: 2px black solid;
+    border-radius: 1rem;
+}
+
+#game_intro>* {
+    margin-bottom: 1rem;
+    line-height: 1.5rem;
 }

@@ -130,6 +130,7 @@ const loading = document.querySelector('#loading');
 const progress = document.querySelector('#progress');
 
 const title = document.querySelector('title');
+const game_intro = document.querySelector('#game_intro');
 
 login_button.addEventListener('click', (e) => {
     e.preventDefault();
@@ -148,11 +149,13 @@ login_button.addEventListener('click', (e) => {
         if (current_role === 'host') {
             host_controls_title.innerText += ` for Room #${session_input.value}`;
             host_controls.style.display = 'flex';
+            game_intro.style.display = 'none';
             reset_board.addEventListener('click', (e) => {
                 e.preventDefault();
                 unsubscribe_all();
+                console.log(game_intro);
                 reset_board.disabled = true;
-                table.innerText = '' // Deletes table
+                table.innerText = ''; // Deletes table
                 host_init_game();
             })
         } else if (current_role === 'player') {
@@ -300,7 +303,7 @@ function add_plot_claim_delay(s) { // 1 parm (s) is # of seconds to delay the pl
 
     // console.log('delay = ' + x);
     wait_to_move.innerText = `${s}s`;
-    const check_time = function () {
+    const check_time = function() {
         s--
         wait_to_move.innerText = `${s}s`;
         if (s <= 0) { // End
@@ -386,9 +389,9 @@ function sync_game(sync_time, game_timer) {
     const host_sync = parseInt(ms_format_tstamp(sync_time));
     const start_time = host_sync + 50; // 5 Second delay for loading
 
-    (function () {
+    (function() {
         // Sync Game
-        const check_time = function () {
+        const check_time = function() {
             const current = parseInt(ms_format_tstamp(timestamp()));
             const time_diff = start_time - current;
             display_timer = Math.round(time_diff / 10);
@@ -416,7 +419,7 @@ function sync_game(sync_time, game_timer) {
 
         // Set Countdown
         let countdown_time = game_timer;
-        const countdown = function () {
+        const countdown = function() {
             const current = parseInt(format_tstamp(timestamp()));
             countdown_time--;
 
@@ -448,10 +451,10 @@ function push_indexes(cell) { // SET
         bomb: cell.dataset.bomb,
     };
 
-    docRef.set(data).then(function () { // Push data to DB
+    docRef.set(data).then(function() { // Push data to DB
         // do stuff after
         console.log('Reset cell');
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.error(error);
     });
 }
@@ -463,10 +466,10 @@ function push_players(index) { // UPDATE Method
         fill: cells[index].dataset.fill,
     };
 
-    docRef.update(data).then(function () { // Push data to DB
+    docRef.update(data).then(function() { // Push data to DB
         // do stuff after
         console.log('Pushed player');
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.error(error);
     });
 }
@@ -478,10 +481,10 @@ function push_bombs(index) { // UPDATE Method
         bomb: true,
     };
 
-    docRef.update(data).then(function () { // Push data to DB
+    docRef.update(data).then(function() { // Push data to DB
         // do stuff after
         console.log('Pushed bomb');
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.error(error);
     });
 }
@@ -493,10 +496,10 @@ function push_selection(cell) { // UPDATE Method
         fill: current_player,
     };
 
-    docRef.update(data).then(function () { // Push data to DB
+    docRef.update(data).then(function() { // Push data to DB
         // do stuff after
         console.log('Pushed cell update to DB');
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.error(error);
     });
 }
@@ -508,10 +511,10 @@ function push_diffuse(cell) { // UPDATE Method
         bomb: cell.dataset.bomb,
     };
 
-    docRef.update(data).then(function () { // Push data to DB
+    docRef.update(data).then(function() { // Push data to DB
         // do stuff after
         console.log('Pushed bomb diffuse to DB');
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.error(error);
     });
 }
@@ -524,10 +527,10 @@ function push_death_plot(index) { // UPDATE Method
         fill: 'black',
     };
 
-    docRef.update(data).then(function () { // Push data to DB
+    docRef.update(data).then(function() { // Push data to DB
         // do stuff after
         console.log('Pushed death innerText to DB');
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.error(error);
     });
 }
@@ -539,10 +542,10 @@ function push_death(current_player) {
         dead: true,
     };
 
-    docRef.update(data).then(function () { // Push data to DB
+    docRef.update(data).then(function() { // Push data to DB
         // do stuff after
         console.log('Pushed death');
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.error(error);
     });
 }
@@ -560,10 +563,10 @@ function send_ready_signal() { // SET Method
 
     sync_game(sync_tstamp, timer_input.value) // Host game sync
 
-    docRef.set(data).then(function () { // Push data to DB
+    docRef.set(data).then(function() { // Push data to DB
         // do stuff after
         console.log('Session is ready!');
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.error(error);
     });
 }
@@ -630,8 +633,8 @@ function check_for_win(scores) {
 }
 
 function declare_win() {
-    const max = Math.max.apply(Math, scores.map(function (o) { return o.count; }));
-    const winner = scores.filter(function (o) { return (o.count == max); });
+    const max = Math.max.apply(Math, scores.map(function(o) { return o.count; }));
+    const winner = scores.filter(function(o) { return (o.count == max); });
 
     winner_status.innerText = winner[0].display_name;
     toggle_modal('modal_win');
@@ -667,19 +670,19 @@ function win_effect(color) {
     play_tone('win');
     const flash_speed = 175; // in ms
     flash_v1(color);
-    setTimeout(function () {
+    setTimeout(function() {
         flash_v2(color);
-        setTimeout(function () {
+        setTimeout(function() {
             flash_v1(color);
-            setTimeout(function () {
+            setTimeout(function() {
                 flash_v2(color);
-                setTimeout(function () {
+                setTimeout(function() {
                     flash_v1(color);
-                    setTimeout(function () {
+                    setTimeout(function() {
                         flash_v2(color);
-                        setTimeout(function () {
+                        setTimeout(function() {
                             flash_v1(color);
-                            setTimeout(function () {
+                            setTimeout(function() {
                                 flash_v2(color);
                             }, flash_speed);
                         }, flash_speed);
@@ -702,10 +705,10 @@ function reset_scores() {
             dead: false,
         };
 
-        docRef.set(data).then(function () { // Push data to DB
+        docRef.set(data).then(function() { // Push data to DB
             // do stuff after
             console.log('Reset score');
-        }).catch(function (error) {
+        }).catch(function(error) {
             console.error(error);
         });
 
@@ -721,10 +724,10 @@ function push_scores() {
             count: scores[i].count,
         };
 
-        docRef.update(data).then(function () { // Push data to DB
+        docRef.update(data).then(function() { // Push data to DB
             // do stuff after
             console.log('Pushed score');
-        }).catch(function (error) {
+        }).catch(function(error) {
             console.error(error);
         });
 
@@ -743,12 +746,13 @@ function player_init_game() {
     var r_x = 0;
     const docRef = db.collection('sessions').doc(current_session).collection('ready').doc('ready');
 
-    const snapshot_ready = docRef.onSnapshot(function (doc) {
+    const snapshot_ready = docRef.onSnapshot(function(doc) {
         r_x++;
         if (r_x > 1) { // After 2nd snapshot
             unsubscribe_all();
             toggle_modal('close');
             console.log('I hear a reset!');
+            game_intro.style.display = 'none';
             game_status.style.display = 'none';
             pull_new_board();
         }
@@ -764,7 +768,7 @@ function pull_new_board() {
 function pull_cell_count() {
     const docRef = db.collection('sessions').doc(current_session).collection('ready').doc('ready');
 
-    docRef.get().then(function (doc) {
+    docRef.get().then(function(doc) {
         if (doc.exists) {
             const result = doc.data();
 
@@ -787,7 +791,7 @@ function pull_cell_count() {
             // doc.data() will be undefined in this case
             console.log('No such document!');
         }
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.log('Error getting document:', error);
     });
 }
@@ -795,7 +799,7 @@ function pull_cell_count() {
 function build_local_board(i) {
     const docRef = db.collection('sessions').doc(current_session).collection('cells').doc(`${i}`);
 
-    docRef.get().then(function (doc) {
+    docRef.get().then(function(doc) {
         if (doc.exists) {
             const result = doc.data();
 
@@ -810,7 +814,7 @@ function build_local_board(i) {
             // doc.data() will be undefined in this case
             console.log('No such document!');
         }
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.log('Error getting document:', error);
     });
 }
@@ -840,14 +844,14 @@ function local_build_cell(i, index, bomb, fill, innerText) {
 function add_cell_snapshot(i) {
     const docRef = db.collection('sessions').doc(current_session).collection('cells').doc(`${i}`);
     var r_x = 0;
-    const snapshot_cells = docRef.onSnapshot(function (doc) {
+    const snapshot_cells = docRef.onSnapshot(function(doc) {
         //do stuff
         r_x++;
 
         if (r_x > 1) { // After 2nd snapshot
             const docRef = db.collection('sessions').doc(current_session).collection('cells').doc(`${i}`);
 
-            docRef.get().then(function (doc) {
+            docRef.get().then(function(doc) {
                 window.cells = document.querySelectorAll('.cell');
                 const result = doc.data();
 
@@ -868,7 +872,7 @@ function add_cell_snapshot(i) {
 
                 update_scoreboard();
 
-            }).catch(function (error) {
+            }).catch(function(error) {
                 console.log('Error getting document:', error);
             });
         }
@@ -884,8 +888,8 @@ function add_death_snapshot_listener() {
 
         const docRef = db.collection('sessions').doc(current_session).collection('scores').doc(player);
 
-        const snapshot_scores = docRef.onSnapshot(function (doc) {
-            docRef.get().then(function (doc) {
+        const snapshot_scores = docRef.onSnapshot(function(doc) {
+            docRef.get().then(function(doc) {
                 if (doc.exists) {
                     const result = doc.data();
 
@@ -900,7 +904,7 @@ function add_death_snapshot_listener() {
                     // doc.data() will be undefined in this case
                     console.log('No such document!');
                 }
-            }).catch(function (error) {
+            }).catch(function(error) {
                 console.log('Error getting document:', error);
             });
 
