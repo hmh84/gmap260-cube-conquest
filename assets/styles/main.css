@@ -329,6 +329,10 @@ button.warning:hover {
     border-radius: .5rem;
 }
 
+.modal_common img {
+    max-width: 60%;
+}
+
 .modal_common>* {
     margin-bottom: 1rem !important;
 }
