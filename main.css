@@ -39,27 +39,35 @@ main > *:last-of-type {
 #table {
     flex-wrap: wrap;
     width: 100%;
-    height: fit-content;
-    
-    display: inline-grid;
+	 display: inline-block;
+	 position: relative;
     display: none;
-    grid-template-columns: 50px 50px 50px 50px;
     border-bottom: 3px solid black;
     border-left: 3px solid black;
+	 margin-top: -100%;
+}
+
+#table-dummy {
+	margin-top: 100%; 
 }
 
 .cell {
-    height: 5rem;
     background-color: rgb(201, 201, 201);
     display: flex;
     justify-content: center;
     align-items: center;
     text-transform: capitalize;
-
     padding: 15px;
     text-align: center;
     border-top: 3px solid black;
     border-right: 3px solid black;
+	 background-color: rgb(201, 201, 201);
+}
+
+#table > div::before {
+  content: "";
+  padding-bottom: 100%;
+  display: block;
 }
 
 .cell:hover {
