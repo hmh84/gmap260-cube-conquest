@@ -39,13 +39,23 @@ main>*:last-of-type {
 #table {
     flex-wrap: wrap;
     width: 100%;
-    height: fit-content;
-    display: inline-grid;
     display: none;
-    grid-template-columns: 50px 50px 50px 50px;
     border-bottom: 3px solid black;
     border-left: 3px solid black;
     /* max-height: 80vh; */
+    display: inline-block;
+    position: relative;
+    margin-top: -100%;
+}
+
+#table-dummy {
+    margin-top: 100%;
+}
+
+#table>div::before {
+    content: "";
+    padding-bottom: 100%;
+    display: block;
 }
 
 .cell {
