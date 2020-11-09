@@ -150,14 +150,7 @@ function updateBombGame() {
             idealCut.type = "hidden";
             bombGame.key = false;
 
-            // APP_JS.....
-            active_cell.dataset.bomb = false;
-            push_diffuse(active_cell);
-            setTimeout(function() {
-                // I am delayed
-                toggle_modal('close');
-            }, 1000);
-
+            defuse_bomb();
         } else {
             prompt.text = "You";
             prompt2.text = "The bomb";
@@ -167,12 +160,7 @@ function updateBombGame() {
             isWireCut = true;
             scissors2.image.src = "../assets/graphics/Scissors3DMoveableBlade_2.png";
 
-            // APP_JS.....
-            kill_player(active_cell);
-            setTimeout(function() {
-                // I am delayed
-                toggle_modal('close');
-            }, 2000); // 2s
+            detonate_bomb();
         }
     }
     //Once the scissors and wire overlap, user presses the space bar to cut
@@ -240,12 +228,7 @@ function updateBombGame() {
         prompt5.text = "";
         bombIcon.image.src = "../assets/graphics/bomb_0.png";
 
-        // APP_JS.....
-        kill_player(active_cell);
-        setTimeout(function() {
-            // I am delayed
-            toggle_modal('close');
-        }, 2000); // 2s
+        detonate_bomb();
     }
     //Timer that lasts about 10 seconds.
     //To keep the game running smoothly, I just
@@ -279,20 +262,38 @@ function stopMove() {
 }
 
 function autoDefuseWindow() {
-    if (confirm("Spend X color points to auto defuse bomb?")) {
-        prompt.text = "";
-        prompt2.text = "The bomb was";
-        prompt3.text = "";
-        prompt4.text = "defused";
-        prompt5.text = "";
-        isWireCut = true;
+    if (confirm("50-50 chance of this working... you sure?")) {
+        const x = Math.random().toFixed(2);
+        if (x <= 0.5) { // 50% chance
+            prompt.text = "";
+            prompt2.text = "The bomb was";
+            prompt3.text = "";
+            prompt4.text = "defused";
+            prompt5.text = "";
+            isWireCut = true;
 
-        // APP_JS.....
-        active_cell.dataset.bomb = false;
-        push_diffuse(active_cell);
-        setTimeout(function() {
-            // I am delayed
-            toggle_modal('close');
-        }, 1000);
+            defuse_bomb();
+        } else {
+            detonate_bomb();
+        }
     }
+}
+
+function defuse_bomb() {
+    // APP_JS.....
+    active_cell.dataset.bomb = false;
+    push_diffuse(active_cell);
+    setTimeout(function() {
+        // I am delayed
+        toggle_modal('close');
+    }, 1000);
+}
+
+function detonate_bomb() {
+    // APP_JS.....
+    kill_player(active_cell);
+    setTimeout(function() {
+        // I am delayed
+        toggle_modal('close');
+    }, 2000); // 2s
 }
