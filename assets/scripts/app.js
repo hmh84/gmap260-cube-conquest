@@ -11,6 +11,11 @@ intro_button.addEventListener('click', (e) => {
     toggle_modal('modal_intro');
 });
 
+hide_intro.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggle_modal('close');
+});
+
 // ====================
 // GENERAL FUNCTIONS
 // ====================
