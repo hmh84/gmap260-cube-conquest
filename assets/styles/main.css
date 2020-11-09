@@ -173,6 +173,11 @@ main>*:last-of-type {
     margin: auto;
 }
 
+#login_form img {
+    width: fit-content;
+    margin: auto;
+}
+
 h1 {
     width: 100%;
     text-align: center;

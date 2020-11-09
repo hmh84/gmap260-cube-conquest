@@ -16,6 +16,15 @@ hide_intro.addEventListener('click', (e) => {
     toggle_modal('close');
 });
 
+const all_buttons = document.querySelectorAll('button');
+
+all_buttons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        play_tone('btn_press');
+    })
+});
+
 // ====================
 // GENERAL FUNCTIONS
 // ====================
@@ -39,7 +48,7 @@ function ms_format_tstamp(tstamp) { // Formats moment.js timestamp into cleaner 
 }
 
 function seconds_convert(total_seconds) {
-    var m = Math.floor(totafl_seconds / 60);
+    var m = Math.floor(total_seconds / 60);
     var s = total_seconds - m * 60;
     var seconds = ('0' + s).slice(-2);
 
@@ -276,7 +285,7 @@ function fill_cell(cell) {
                 console.log('found a bomb...');
                 add_plot_claim_delay('5');
                 toggle_modal('modal_bomb');
-                play_tone('uh-oh');
+                play_tone('uh_oh');
                 arm_bomb(cell);
             } else { // Standard unfilled cell
                 console.log('no bomb, standard fill...');
@@ -392,6 +401,7 @@ function sync_game(sync_time, game_timer) {
                 update_scoreboard();
                 timer.innerText = 'Go!';
                 play_tone('start');
+                play_tone('bgm');
                 window.time_block = false;
                 window.c_check = setInterval(countdown, 1000) // Start Countdown
             } else {
@@ -920,12 +930,10 @@ function play_tone(target) {
 // TASKS
 
 // 1. Spend points after bomb defusal?
-// 5. SFX
-// 6. Add actual mini-game to death modal
-// 7. Change score after death
-// Change ? to 'Instructions'
+// 2. SFX (game track, button clicks)
+// 3. Add actual mini-game to death modal
+// 4. Change score after death
 
-// 4. Only allow movement in NSEW directions
-// 8. Fix host controls not fitting on iPad
+// 5. Fix host controls not fitting on iPad
 
-// 2. If all players are dead the game ends
+// 6. If all players are dead the game ends
