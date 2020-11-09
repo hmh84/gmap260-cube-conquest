@@ -25,6 +25,20 @@ all_buttons.forEach(button => {
     })
 });
 
+function play_tone(target) {
+    if (target === 'bgm') {
+        const bgm = document.querySelector('#bgm');
+        if (bgm.paused) {
+            bgm.play();
+        } else {
+            bgm.currentTime = 0
+        }
+    } else {
+        const new_audio = new Audio(`assets/sounds/${target}.mp3`);
+        new_audio.play();
+    }
+}
+
 // ====================
 // GENERAL FUNCTIONS
 // ====================
@@ -920,20 +934,12 @@ function unsubscribe_all() {
     typeof b_check != "undefined" && clearInterval(b_check);
 }
 
-// Sounds
-
-function play_tone(target) {
-    const new_audio = new Audio(`assets/sounds/${target}.mp3`);
-    new_audio.play();
-}
-
 // TASKS
 
 // 1. Spend points after bomb defusal?
-// 2. SFX (game track, button clicks)
-// 3. Add actual mini-game to death modal
-// 4. Change score after death
+// 2. Add actual mini-game to death modal
+// 3. Change score after death
 
-// 5. Fix host controls not fitting on iPad
+// 4. Fix host controls not fitting on iPad
 
-// 6. If all players are dead the game ends
+// 5. If all players are dead the game ends
