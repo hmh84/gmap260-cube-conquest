@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" defer></script>
     <script src="assets/scripts/firebase-config.js" defer></script>
     <script src="assets/scripts/app.js" defer></script>
+    <script src="assets/scripts/minigame.js" defer></script>
     <!-- Styles -->
     <link rel="stylesheet" href="assets/styles/normalize.css">
     <link rel="stylesheet" href="assets/styles/main.css">
@@ -139,10 +140,8 @@
             <button class="proceed close_modal">Okay</button>
         </div>
         <div class="modal_common" id="modal_bomb">
-            <h2>Oh no a bomb!</h2>
-            <img id="bomb_img" src="assets/graphics/bomb_3.png">
-            <p id="ticker_clock"></p>
-            <button id="disarm">Disarm</button>
+            <!-- Minigame populates here -->
+            <button id="autoDefuse" onclick="autoDefuseWindow()">AUTO-<br>DEFUSE</button>
         </div>
         <div class="modal_common" id="modal_dead">
             <h2>BOOM! You died... womp</h2>

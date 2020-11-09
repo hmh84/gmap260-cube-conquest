@@ -85,12 +85,14 @@ const modal = document.querySelector('#modal');
 const all_modals = document.querySelectorAll('.modal_common');
 
 function toggle_modal(new_modal) {
+    document.body.classList.add('noscroll');
     modal.classList.add('modal_open');
     all_modals.forEach(modal => {
         modal.style.display = 'none';
     });
     if (new_modal == 'close') {
         modal.classList.remove('modal_open');
+        document.body.classList.remove('noscroll');
     } else {
         document.querySelector(`#${new_modal}`).style.display = 'flex';
     }
@@ -100,22 +102,22 @@ const close_modal = document.querySelectorAll('.close_modal');
 
 
 function arm_bomb(cell) {
-    // do stuff
+    minigame(cell);
+    // // Re-init disarm
+    // var old_e = document.querySelector('#disarm');
+    // var new_e = old_e.cloneNode(true);
+    // old_e.parentNode.replaceChild(new_e, old_e);
 
-    // Re-init disarm
-    var old_e = document.querySelector('#disarm');
-    var new_e = old_e.cloneNode(true);
-    old_e.parentNode.replaceChild(new_e, old_e);
+    // // If disarmed.....
+    // const disarm = document.querySelector('#disarm');
+    // disarm.addEventListener('click', (e) => {
+    //     e.preventDefault();
+    //     cell.dataset.bomb = false;
+    //     push_diffuse(cell);
+    //     toggle_modal('close');
+    // });
 
-    const disarm = document.querySelector('#disarm');
-    disarm.addEventListener('click', (e) => {
-        // If disarmed
-        e.preventDefault();
-        cell.dataset.bomb = false;
-        push_diffuse(cell);
-        toggle_modal('close');
-    });
-    // If not disarmed
+    // // If not disarmed.....
     // kill_player(cell);
 }
 
@@ -300,6 +302,7 @@ const wait_to_move = document.querySelector('#wait_to_move');
 window.plot_claim_delay = false; // Init
 
 function fill_cell(cell) {
+    window.active_cell = cell;
     if (!dead && !plot_claim_delay && !time_block && (check_adjacent(cell) == true)) { // If not dead, no plot claim delay, and game timer has not run out
 
         console.log('b4 fill = ' + cell.dataset.fill);

@@ -536,3 +536,32 @@ button {
         margin-bottom: 5rem;
     }
 }
+
+
+/* MINI-GAME */
+
+.noscroll {
+    overflow: hidden;
+}
+
+canvas {
+    border: 1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+
+@font-face {
+    font-family: mainFont;
+    src: url("../fonts/pkmnem.ttf");
+}
+
+@font-face {
+    font-family: timerFont;
+    src: url("../fonts/DS-DIGI.TTF");
+}
+
+#autoDefuse {
+    position: absolute;
+    left: 80px;
+    top: 285px;
+    font-family: mainFont;
+}
