@@ -34,7 +34,7 @@ function ms_format_tstamp(tstamp) { // Formats moment.js timestamp into cleaner 
 }
 
 function seconds_convert(total_seconds) {
-    var m = Math.floor(total_seconds / 60);
+    var m = Math.floor(totafl_seconds / 60);
     var s = total_seconds - m * 60;
     var seconds = ('0' + s).slice(-2);
 
@@ -258,7 +258,7 @@ const wait_to_move = document.querySelector('#wait_to_move');
 window.plot_claim_delay = false; // Init
 
 function fill_cell(cell) {
-    if (!dead && !plot_claim_delay && !time_block && (check_adjacent(cell)==true)) { // If not dead, no plot claim delay, and game timer has not run out
+    if (!dead && !plot_claim_delay && !time_block && (check_adjacent(cell) == true)) { // If not dead, no plot claim delay, and game timer has not run out
 
         console.log('b4 fill = ' + cell.dataset.fill);
         console.log('TEST' + cell.dataset.fill === current_player);
@@ -304,23 +304,22 @@ function add_plot_claim_delay(s) { // 1 parm (s) is # of seconds to delay the pl
 }
 
 function check_adjacent(cell) {
-	 let current_index = parseInt(cell.dataset.index);
-	 const count_x = parseInt(Math.sqrt(cells.length).toFixed(0));
-	 let adj_cells = [cells[current_index+1], cells[current_index-1], cells[current_index+(count_x)], cells[current_index-count_x]];
-	 let count = 0;
-	 adj_cells.forEach(i => {
-		if (typeof(i) != 'undefined') {
-			if (i.dataset.fill == current_player) {
-				count +=1;
-			}
-		}
-	 });
-	if (count > 0) {
-		return true;	
-	}
-	else {
-		return false;
-	}
+    let current_index = parseInt(cell.dataset.index);
+    const count_x = parseInt(Math.sqrt(cells.length).toFixed(0));
+    let adj_cells = [cells[current_index + 1], cells[current_index - 1], cells[current_index + (count_x)], cells[current_index - count_x]];
+    let count = 0;
+    adj_cells.forEach(i => {
+        if (typeof(i) != 'undefined') {
+            if (i.dataset.fill == current_player) {
+                count += 1;
+            }
+        }
+    });
+    if (count > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function load_bombs() {
