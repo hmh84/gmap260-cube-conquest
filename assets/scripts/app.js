@@ -244,7 +244,7 @@ function resize_board() {
     style.innerHTML = `
         .cell {
             width: calc(100% / ${x});
-            height: calc(80vh / ${x});
+            height: calc(100% / ${x});
         }
         .cell[data-fill="${current_player}"]:hover {
             cursor: not-allowed;
@@ -258,7 +258,7 @@ const wait_to_move = document.querySelector('#wait_to_move');
 window.plot_claim_delay = false; // Init
 
 function fill_cell(cell) {
-    if (!dead && !plot_claim_delay && !time_block) { // If not dead, no plot claim delay, and game timer has not run out
+    if (!dead && !plot_claim_delay && !time_block && (check_adjacent(cell)==true)) { // If not dead, no plot claim delay, and game timer has not run out
 
         console.log('b4 fill = ' + cell.dataset.fill);
         console.log('TEST' + cell.dataset.fill === current_player);
@@ -304,31 +304,23 @@ function add_plot_claim_delay(s) { // 1 parm (s) is # of seconds to delay the pl
 }
 
 function check_adjacent(cell) {
-    const cells = document.querySelectorAll('.cell');
-    const x = parseInt(Math.sqrt(cells.length).toFixed(0));
-    const cur_index = parseInt(cell.dataset.index);
-
-    const adj_cells = [
-        top = {
-            obj: cells[cur_index - x],
-        },
-        right = {
-            obj: cells[cur_index + 1],
-        },
-        bottom = {
-            obj: cells[cur_index + x],
-        },
-        left = {
-            obj: cells[cur_index - 1],
-        },
-    ];
-
-    adj_cells.forEach(c => { // If in bounds & is current players color
-        if ((c.obj) && (c.obj.dataset.fill === current_player)) {
-            console.log('true');
-            return true;
-        }
-    });
+	 let current_index = parseInt(cell.dataset.index);
+	 const count_x = parseInt(Math.sqrt(cells.length).toFixed(0));
+	 let adj_cells = [cells[current_index+1], cells[current_index-1], cells[current_index+(count_x)], cells[current_index-count_x]];
+	 let count = 0;
+	 adj_cells.forEach(i => {
+		if (typeof(i) != 'undefined') {
+			if (i.dataset.fill == current_player) {
+				count +=1;
+			}
+		}
+	 });
+	if (count > 0) {
+		return true;	
+	}
+	else {
+		return false;
+	}
 }
 
 function load_bombs() {

@@ -37,38 +37,31 @@ main>*:last-of-type {
 }
 
 #table {
-    flex-wrap: wrap;
-    width: 100%;
-    display: none;
-    border-bottom: 3px solid black;
-    border-left: 3px solid black;
-    /* max-height: 80vh; */
-    display: inline-block;
-    position: relative;
-    margin-top: -100%;
-}
-
-#table-dummy {
-    margin-top: 100%;
-}
-
-#table>div::before {
-    content: "";
-    padding-bottom: 100%;
-    display: block;
+   width: 80vh;
+   height: 80vh;
+   flex-wrap: wrap;
+   margin: auto;
+   display: inline-grid;
+   grid-template-columns: repeat(auto-fill, minmax(20px, 1fr));
+   display: none;
+   border-bottom: 3px solid black;
+   border-left: 3px solid black;
+   margin-bottom: 3rem;
+   border-top: 3px solid black;
 }
 
 .cell {
-    /* height: 5rem; */
-    background-color: rgb(201, 201, 201);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-transform: capitalize;
-    padding: 15px;
-    text-align: center;
-    border-top: 3px solid black;
-    border-right: 3px solid black;
+   background-color: rgb(201, 201, 201);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   text-transform: capitalize;
+   padding: 15px;
+   text-align: center;
+/*   border-top: 3px solid black;*/
+   border-right: 3px solid black;
+   margin: 0;
+   border-bottom: 3px solid black;
 }
 
 .cell:hover {
@@ -446,6 +439,7 @@ option:hover {
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
+    pointer-events: none;
 }
 
 #intro_button {
@@ -455,6 +449,9 @@ option:hover {
     border: 3px solid var(--blue);
     border-radius: .5rem;
     font-weight: bold;
+    height: 3rem;
+    width: 3rem;
+    pointer-events: all !important;
     padding: .5rem .75rem;
 }
 
@@ -516,4 +513,24 @@ button {
 #game_intro>* {
     margin-bottom: 1rem;
     line-height: 1.5rem;
+}
+
+@media screen and (max-width: 770px) {
+	main {
+		padding: 0;
+	}
+	#scoreboard {
+		width: 100vw;
+	}
+	#table {
+		width: 100vw;
+		height: 100vw;
+	}
+	.cell {
+		padding: 0;
+		height: 78px;
+	}
+	#host_controls {
+		margin-bottom: 5rem;
+	}
 }
