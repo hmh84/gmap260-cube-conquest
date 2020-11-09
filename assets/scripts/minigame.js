@@ -23,20 +23,20 @@ function minigame() {
     }
     isGameOn = true;
     bombGame.start();
-    background = new component(bombGame.canvas.width, bombGame.canvas.height, "../assets/graphics/BackGround.png", 0, 0, "image");
-    wire = new component(bombGame.canvas.width + 40, 69, "../assets/graphics/Uncut_Wire.png", 0 - 27, bombGame.canvas.height * 0.18, "image");
-    scissors = new component(270, 270, "../assets/graphics/Scissors3DStationBlade_0.png", 10, bombGame.canvas.height * 0.01, "image");
-    scissors2 = new component(270, 270, "../assets/graphics/Scissors3DMoveableBlade_0.png", 10, bombGame.canvas.height * 0.01, "image");
+    background = new component(bombGame.canvas.width, bombGame.canvas.height, "assets/graphics/BackGround.png", 0, 0, "image");
+    wire = new component(bombGame.canvas.width + 40, 69, "assets/graphics/Uncut_Wire.png", 0 - 27, bombGame.canvas.height * 0.18, "image");
+    scissors = new component(270, 270, "assets/graphics/Scissors3DStationBlade_0.png", 10, bombGame.canvas.height * 0.01, "image");
+    scissors2 = new component(270, 270, "assets/graphics/Scissors3DMoveableBlade_0.png", 10, bombGame.canvas.height * 0.01, "image");
     hitbox = new component(scissors.width * 0.05, scissors.height * 0.42, "", scissors.x + scissors.width * 0.6, scissors.y, "hidden");
     wireToCut = new component(Math.random() * 20 + 20, wire.height - 35, "green", Math.random() * (bombGame.canvas.width - 60), wire.y + 9, "transparent");
-    idealCut = new component(22, wireToCut.height, "../assets/graphics/IdealCut.png", wireToCut.x + wireToCut.width * 0.5 - 11, wireToCut.y, "image")
+    idealCut = new component(22, wireToCut.height, "assets/graphics/IdealCut.png", wireToCut.x + wireToCut.width * 0.5 - 11, wireToCut.y, "image")
     prompt = new component("18px", "mainFont", "white", 48, 360, "text", "center");
     prompt2 = new component("18px", "mainFont", "white", 350, 375, "text", "center");
     prompt3 = new component("18px", "mainFont", "white", 48, 375, "text", "center");
     prompt4 = new component("18px", "mainFont", "white", 350, 390, "text", "center");
     prompt5 = new component("18px", "mainFont", "white", 48, 390, "text", "center");
     timerDisplay = new component("90px", "timerFont", "white", 102, 390, "text", "left");
-    bombIcon = new component(100, 100, "../assets/graphics/bomb_3.png", 305, 250, "image");
+    bombIcon = new component(100, 100, "assets/graphics/bomb_3.png", 305, 250, "image");
     minigame_timer = 7;
     goLeft = true;
     isWireCut = false;
@@ -143,8 +143,8 @@ function updateBombGame() {
             prompt5.text = "";
             isWireCut = true;
             wireToCut.type = "hidden";
-            scissors2.image.src = "../assets/graphics/Scissors3DMoveableBlade_2.png";
-            wire.image.src = "../assets/graphics/Cut_Wire.png";
+            scissors2.image.src = "assets/graphics/Scissors3DMoveableBlade_2.png";
+            wire.image.src = "assets/graphics/Cut_Wire.png";
             wire.width = 912;
             wire.x = hitbox.x + hitbox.width - wire.width * 0.5;
             idealCut.type = "hidden";
@@ -158,7 +158,7 @@ function updateBombGame() {
             prompt4.text = "detonated!";
             prompt5.text = "cut the wire!";
             isWireCut = true;
-            scissors2.image.src = "../assets/graphics/Scissors3DMoveableBlade_2.png";
+            scissors2.image.src = "assets/graphics/Scissors3DMoveableBlade_2.png";
 
             detonate_bomb();
         }
@@ -208,14 +208,14 @@ function updateBombGame() {
 
         timerString = minigame_timer.toString();
         if (parseInt(timerString.substring(2, 3)) % 2 == 0) {
-            scissors2.image.src = "../assets/graphics/Scissors3DMoveableBlade_1.png";
+            scissors2.image.src = "assets/graphics/Scissors3DMoveableBlade_1.png";
         } else {
-            scissors2.image.src = "../assets/graphics/Scissors3DMoveableBlade_0.png";
+            scissors2.image.src = "assets/graphics/Scissors3DMoveableBlade_0.png";
         }
         if (Math.round(minigame_timer) == 4) {
-            bombIcon.image.src = "../assets/graphics/bomb_2.png";
+            bombIcon.image.src = "assets/graphics/bomb_2.png";
         } else if (Math.round(minigame_timer) == 1) {
-            bombIcon.image.src = "../assets/graphics/bomb_1.png";
+            bombIcon.image.src = "assets/graphics/bomb_1.png";
         }
         timerDisplay.text = "0" + timerString.substring(0, 1) + ":" + timerString.substring(2, 4);
         minigame_timer = minigame_timer - 0.013;
@@ -226,7 +226,7 @@ function updateBombGame() {
         prompt3.text = "";
         prompt4.text = "detonated";
         prompt5.text = "";
-        bombIcon.image.src = "../assets/graphics/bomb_0.png";
+        bombIcon.image.src = "assets/graphics/bomb_0.png";
 
         detonate_bomb();
     }

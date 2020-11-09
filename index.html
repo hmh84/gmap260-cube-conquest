@@ -98,7 +98,7 @@
                 <select id="table_size_input" required>
                     <option value="null">Select</option>
 
-                    <option value="9">3x3 [Dev]</option>
+                    <!-- <option value="9">3x3 [Dev]</option> -->
                     <option value="25">5x5</option>
                     <option value="36">6x6 Max recc. for Mobile</option>
                     <option value="64">8x8</option>
@@ -109,12 +109,14 @@
                 <select id="timer_input" required>
                     <option value="null">Select</option>
 
-                    <option value="15">0:15 [Dev]</option>
+                    <!-- <option value="15">0:15 [Dev]</option> -->
                     <option value="60">1:00</option>
                     <option value="90">1:30</option>
                     <option value="120">2:00</option>
                     <option value="150">2:30</option>
                     <option value="180">3:00</option>
+                    <option value="210">3:30</option>
+                    <option value="240">4:00</option>
                 </select>
                 <button class="proceed" id="reset_board">Game</button>
                 <p class="warning">Wait until all players have joined to start!</p>
@@ -141,7 +143,7 @@
         </div>
         <div class="modal_common" id="modal_bomb">
             <!-- Minigame populates here -->
-            <button id="autoDefuse" onclick="autoDefuseWindow()">AUTO-<br>DEFUSE</button>
+            <button id="autoDefuse" onclick="autoDefuseWindow()">Auto-<br>Defuse?</button>
         </div>
         <div class="modal_common" id="modal_dead">
             <h2>BOOM! You died... womp</h2>
