@@ -447,12 +447,12 @@ option:hover {
     color: var(--blue);
     border-color: var(--blue);
     border: 3px solid var(--blue);
-    border-radius: 50%;
+    border-radius: .5rem;
     font-weight: bold;
-    padding: 0;
     height: 3rem;
     width: 3rem;
     pointer-events: all !important;
+    padding: .5rem .75rem;
 }
 
 #intro_button:hover {

@@ -11,18 +11,6 @@ intro_button.addEventListener('click', (e) => {
     toggle_modal('modal_intro');
 });
 
-hide_intro.addEventListener('click', (e) => {
-    e.preventDefault();
-    sessionStorage.setItem('intro', 'false');
-    console.log('intro set to: ' + sessionStorage.getItem('intro'));
-    toggle_modal('close');
-});
-
-if (sessionStorage.getItem('intro') === 'true') {
-    console.log('Init intro = ' + sessionStorage.getItem('intro'));
-    toggle_modal('modal_intro');
-}
-
 // ====================
 // GENERAL FUNCTIONS
 // ====================
@@ -927,11 +915,13 @@ function play_tone(target) {
 
 // TASKS
 
-// 1. Spend points after bomb defusal
-// 2. If all players are dead the game ends
-// 3. Decipher winner name instead of score
-// 4. Only allow movement in NSEW directions
+// 1. Spend points after bomb defusal?
 // 5. SFX
 // 6. Add actual mini-game to death modal
 // 7. Change score after death
+// Change ? to 'Instructions'
+
+// 4. Only allow movement in NSEW directions
 // 8. Fix host controls not fitting on iPad
+
+// 2. If all players are dead the game ends
