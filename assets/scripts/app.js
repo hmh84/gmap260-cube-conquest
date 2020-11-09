@@ -1,5 +1,5 @@
 // ====================
-// INTRODUCTION
+// GENERAL FUNCTIONS
 // ====================
 
 const modal_intro = document.querySelector('#modal_intro');
@@ -17,9 +17,25 @@ hide_intro.addEventListener('click', (e) => {
 });
 
 const all_buttons = document.querySelectorAll('button');
+const all_selects = document.querySelectorAll('select');
+const all_options = document.querySelectorAll('option');
 
 all_buttons.forEach(button => {
     button.addEventListener('click', (e) => {
+        e.preventDefault();
+        play_tone('btn_press');
+    })
+});
+
+all_selects.forEach(select => {
+    select.addEventListener('click', (e) => {
+        e.preventDefault();
+        play_tone('btn_press');
+    })
+});
+
+all_options.forEach(option => {
+    option.addEventListener('click', (e) => {
         e.preventDefault();
         play_tone('btn_press');
     })
@@ -38,10 +54,6 @@ function play_tone(target) {
         new_audio.play();
     }
 }
-
-// ====================
-// GENERAL FUNCTIONS
-// ====================
 
 function no() {
     // do nothing
@@ -97,11 +109,14 @@ function arm_bomb(cell) {
 
     const disarm = document.querySelector('#disarm');
     disarm.addEventListener('click', (e) => {
+        // If disarmed
         e.preventDefault();
         cell.dataset.bomb = false;
         push_diffuse(cell);
         toggle_modal('close');
     });
+    // If not disarmed
+    // kill_player(cell);
 }
 
 function kill_player(cell) {
@@ -169,7 +184,6 @@ login_button.addEventListener('click', (e) => {
             reset_board.addEventListener('click', (e) => {
                 e.preventDefault();
                 unsubscribe_all();
-                console.log(game_intro);
                 reset_board.disabled = true;
                 table.innerText = ''; // Deletes table
                 host_init_game();
@@ -621,8 +635,6 @@ function update_scoreboard() {
             display_name: 'Player 4'
         },
     ];
-
-    // console.log(scores);
 
     push_scores();
     check_for_win(scores);
