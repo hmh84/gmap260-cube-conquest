@@ -756,6 +756,7 @@ function player_init_game() {
             console.log('I hear a reset!');
             game_intro.style.display = 'none';
             game_status.style.display = 'none';
+            game_status_2.style.display = 'none';
             pull_new_board();
         }
     });
