@@ -100,27 +100,6 @@ function toggle_modal(new_modal) {
 
 const close_modal = document.querySelectorAll('.close_modal');
 
-
-function arm_bomb(cell) {
-    minigame(cell);
-    // // Re-init disarm
-    // var old_e = document.querySelector('#disarm');
-    // var new_e = old_e.cloneNode(true);
-    // old_e.parentNode.replaceChild(new_e, old_e);
-
-    // // If disarmed.....
-    // const disarm = document.querySelector('#disarm');
-    // disarm.addEventListener('click', (e) => {
-    //     e.preventDefault();
-    //     cell.dataset.bomb = false;
-    //     push_diffuse(cell);
-    //     toggle_modal('close');
-    // });
-
-    // // If not disarmed.....
-    // kill_player(cell);
-}
-
 function kill_player(cell) {
     window.dead = true;
     play_tone('explode');
@@ -317,7 +296,7 @@ function fill_cell(cell) {
                 add_plot_claim_delay('5');
                 toggle_modal('modal_bomb');
                 play_tone('uh_oh');
-                arm_bomb(cell);
+                arm_bomb();
             } else { // Standard unfilled cell
                 console.log('no bomb, standard fill...');
                 add_plot_claim_delay('2');

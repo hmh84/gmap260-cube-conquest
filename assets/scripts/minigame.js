@@ -14,7 +14,7 @@ var isWireCut;
 var isTimerOn;
 var isGameOn;
 
-function minigame() {
+function arm_bomb() {
     toggle_modal('modal_bomb');
 
     if (isGameOn) {
