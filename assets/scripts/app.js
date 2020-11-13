@@ -2,9 +2,9 @@
 // GENERAL FUNCTIONS
 // ====================
 
-const modal_intro = document.querySelector('#modal_intro');
-const hide_intro = document.querySelector('#hide_intro');
-const intro_button = document.querySelector('#intro_button');
+const modal_intro = document.querySelector('#modal_intro'),
+    hide_intro = document.querySelector('#hide_intro'),
+    intro_button = document.querySelector('#intro_button');
 
 intro_button.addEventListener('click', (e) => {
     e.preventDefault();
@@ -16,9 +16,9 @@ hide_intro.addEventListener('click', (e) => {
     toggle_modal('close');
 });
 
-const all_buttons = document.querySelectorAll('button');
-const all_selects = document.querySelectorAll('select');
-const all_options = document.querySelectorAll('option');
+const all_buttons = document.querySelectorAll('button'),
+    all_selects = document.querySelectorAll('select'),
+    all_options = document.querySelectorAll('option');
 
 all_buttons.forEach(button => {
     button.addEventListener('click', (e) => {
@@ -81,8 +81,9 @@ function seconds_convert(total_seconds) {
     return parseInt('' + m + seconds);
 }
 
-const modal = document.querySelector('#modal');
-const all_modals = document.querySelectorAll('.modal_common');
+const modal = document.querySelector('#modal'),
+    all_modals = document.querySelectorAll('.modal_common'),
+    close_modal = document.querySelectorAll('.close_modal')
 
 function toggle_modal(new_modal) {
     document.body.classList.add('noscroll');
@@ -97,8 +98,6 @@ function toggle_modal(new_modal) {
         document.querySelector(`#${new_modal}`).style.display = 'flex';
     }
 };
-
-const close_modal = document.querySelectorAll('.close_modal');
 
 function kill_player(cell) {
     window.dead = true;
@@ -120,29 +119,24 @@ close_modal.forEach(btn => {
 // FORMS
 // ====================
 
-const login_form = document.querySelector('#login_form');
-
-const session_input = document.querySelector('#session_input');
-const player_input = document.querySelector('#player_input');
-const role_input = document.querySelector('#role_input');
-const table_size_input = document.querySelector('#table_size_input');
-
-const login_button = document.querySelector('#login_button');
-const host_controls = document.querySelector('#host_controls');
-const reset_board = document.querySelector('#reset_board');
-
-const game_status = document.querySelector('#game_status');
-const game_status_2 = document.querySelector('#game_status_2');
-const host_controls_title = document.querySelector('#host_controls_title');
-
-const table = document.querySelector('#table');
-const scoreboard = document.querySelector('#scoreboard');
-const timer = document.querySelector('#timer');
-const loading = document.querySelector('#loading');
-const progress = document.querySelector('#progress');
-
-const title = document.querySelector('title');
-const game_intro = document.querySelector('#game_intro');
+const login_form = document.querySelector('#login_form'),
+    session_input = document.querySelector('#session_input'),
+    player_input = document.querySelector('#player_input'),
+    role_input = document.querySelector('#role_input'),
+    table_size_input = document.querySelector('#table_size_input'),
+    login_button = document.querySelector('#login_button'),
+    host_controls = document.querySelector('#host_controls'),
+    reset_board = document.querySelector('#reset_board'),
+    game_status = document.querySelector('#game_status'),
+    game_status_2 = document.querySelector('#game_status_2'),
+    host_controls_title = document.querySelector('#host_controls_title'),
+    table = document.querySelector('#table'),
+    scoreboard = document.querySelector('#scoreboard'),
+    timer = document.querySelector('#timer'),
+    loading = document.querySelector('#loading'),
+    progress = document.querySelector('#progress'),
+    title = document.querySelector('title'),
+    game_intro = document.querySelector('#game_intro');
 
 login_button.addEventListener('click', (e) => {
     e.preventDefault();
@@ -215,7 +209,7 @@ function host_init_game() {
                                 send_ready_signal();
                                 setTimeout(() => {
                                     add_event_listeners();
-                                    for (i = 0; i < cells.length; i++) {
+                                    for (var i = 0; i < cells.length; i++) {
                                         add_cell_snapshot(i);
                                     }
                                     reset_board.classList.add('red-btn');
@@ -243,7 +237,7 @@ function host_init_game() {
 // ===== Client Side Setup =====
 
 function add_cells() {
-    for (i = 0; i < cell_qty; i++) {
+    for (var i = 0; i < cell_qty; i++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
         table.appendChild(cell);
@@ -252,7 +246,7 @@ function add_cells() {
 }
 
 function index_cells() {
-    for (i = 0; i < cells.length; i++) {
+    for (var i = 0; i < cells.length; i++) {
         cells[i].dataset.index = i;
         cells[i].dataset.bomb = false;
         // cells[i].innerText = i;
@@ -347,7 +341,7 @@ function check_adjacent(cell) {
 }
 
 function load_bombs() {
-    for (i = 0; i < cells.length; i++) {
+    for (var i = 0; i < cells.length; i++) {
 
         const x = Math.random().toFixed(2);
         if (!cells[i].dataset.fill) { // If cell is not filled already
@@ -385,18 +379,17 @@ function add_event_listeners() {
 function sync_game(sync_time, game_timer) {
     console.log('Syncing game...');
 
-    const n_host_sync = parseInt(format_tstamp(sync_time));
-    const n_start_time = n_host_sync + 5; // 5 Second delay for loading
-    const n_end_time = n_start_time + seconds_convert(game_timer);
-
-    const host_sync = parseInt(ms_format_tstamp(sync_time));
-    const start_time = host_sync + 50; // 5 Second delay for loading
+    const n_host_sync = parseInt(format_tstamp(sync_time)),
+        n_start_time = n_host_sync + 5, // 5 Second delay for loading
+        n_end_time = n_start_time + seconds_convert(game_timer),
+        host_sync = parseInt(ms_format_tstamp(sync_time)),
+        start_time = host_sync + 50; // 5 Second delay for loading
 
     (function() {
         // Sync Game
         const check_time = function() {
-            const current = parseInt(ms_format_tstamp(timestamp()));
-            const time_diff = start_time - current;
+            const current = parseInt(ms_format_tstamp(timestamp())),
+                time_diff = start_time - current;
             display_timer = Math.round(time_diff / 10);
 
             timer.style.opacity = '1';
@@ -556,14 +549,14 @@ function push_death(current_player) {
 
 function send_ready_signal() { // SET Method
     docRef = db.collection('sessions').doc(current_session).collection('ready').doc('ready');
-    var autoID = db.collection('sessions').doc().id;
-    const sync_tstamp = timestamp();
-    const data = { // Create data
-        status: autoID,
-        cells: cells.length,
-        sync_time: sync_tstamp,
-        game_timer: timer_input.value
-    };
+    const autoID = db.collection('sessions').doc().id,
+        sync_tstamp = timestamp(),
+        data = { // Create data
+            status: autoID,
+            cells: cells.length,
+            sync_time: sync_tstamp,
+            game_timer: timer_input.value
+        };
 
     sync_game(sync_tstamp, timer_input.value) // Host game sync
 
@@ -579,10 +572,10 @@ function send_ready_signal() { // SET Method
 // SCOREBOARD
 // ====================
 
-const red_score = document.querySelector('#red_score');
-const green_score = document.querySelector('#green_score');
-const blue_score = document.querySelector('#blue_score');
-const yellow_score = document.querySelector('#yellow_score');
+const red_score = document.querySelector('#red_score'),
+    green_score = document.querySelector('#green_score'),
+    blue_score = document.querySelector('#blue_score'),
+    yellow_score = document.querySelector('#yellow_score');
 
 function update_scoreboard() {
     red_count = document.querySelectorAll('.cell[data-fill="red"]').length;
@@ -622,9 +615,9 @@ function update_scoreboard() {
     check_for_win(scores);
 }
 
-const modal_win = document.querySelector('#modal_win');
-const winner_status = document.querySelector('#winner_status');
-const modal_bomb = document.querySelector('#modal_bomb');
+const modal_win = document.querySelector('#modal_win'),
+    winner_status = document.querySelector('#winner_status'),
+    modal_bomb = document.querySelector('#modal_bomb');
 
 function check_for_win(scores) {
     const filled_cells = document.querySelectorAll('.cell[data-fill]');
@@ -635,8 +628,8 @@ function check_for_win(scores) {
 }
 
 function declare_win() {
-    const max = Math.max.apply(Math, scores.map(function(o) { return o.count; }));
-    const winner = scores.filter(function(o) { return (o.count == max); });
+    const max = Math.max.apply(Math, scores.map(function(o) { return o.count; })),
+        winner = scores.filter(function(o) { return (o.count == max); });
 
     winner_status.innerText = winner[0].display_name;
     toggle_modal('modal_win');
@@ -698,7 +691,7 @@ function win_effect(color) {
 // ===== Server Side Scoreboard =====
 
 function reset_scores() {
-    for (i = 0; i < scores.length; i++) {
+    for (var i = 0; i < scores.length; i++) {
         const player = scores[i].name.toLowerCase();
         docRef = db.collection('sessions').doc(current_session).collection('scores').doc(player);
 
@@ -718,7 +711,7 @@ function reset_scores() {
 }
 
 function push_scores() {
-    for (i = 0; i < 4; i++) {
+    for (var i = 0; i < 4; i++) {
         const player = scores[i].name.toLowerCase();
         docRef = db.collection('sessions').doc(current_session).collection('scores').doc(player);
 
@@ -773,15 +766,14 @@ function pull_cell_count() {
 
     docRef.get().then(function(doc) {
         if (doc.exists) {
-            const result = doc.data();
-
-            const cell_count = result.cells;
-            const sync_time = result.sync_time;
-            const game_timer = result.game_timer;
+            const result = doc.data(),
+                cell_count = result.cells,
+                sync_time = result.sync_time,
+                game_timer = result.game_timer;
 
             sync_game(sync_time, game_timer);
 
-            for (i = 0; i < cell_count; i++) {
+            for (var i = 0; i < cell_count; i++) {
                 build_local_board(i);
                 if (i === cell_count - 1) { // When completed...
                     window.cell_qty = cell_count; // Amount of cells to be displayed
@@ -804,12 +796,11 @@ function build_local_board(i) {
 
     docRef.get().then(function(doc) {
         if (doc.exists) {
-            const result = doc.data();
-
-            const fill = result.fill;
-            const bomb = result.bomb;
-            const index = result.index;
-            const innerText = result.innerText;
+            const result = doc.data(),
+                fill = result.fill,
+                bomb = result.bomb,
+                index = result.index,
+                innerText = result.innerText;
 
             local_build_cell(i, index, bomb, fill, innerText);
 
@@ -845,73 +836,69 @@ function local_build_cell(i, index, bomb, fill, innerText) {
 // ===== Intra-Game Snapshot Listeners =====
 
 function add_cell_snapshot(i) {
-    const docRef = db.collection('sessions').doc(current_session).collection('cells').doc(`${i}`);
     var r_x = 0;
-    const snapshot_cells = docRef.onSnapshot(function(doc) {
-        //do stuff
-        r_x++;
+    const docRef = db.collection('sessions').doc(current_session).collection('cells').doc(`${i}`),
+        snapshot_cells = docRef.onSnapshot(function(doc) {
+            //do stuff
+            r_x++;
 
-        if (r_x > 1) { // After 2nd snapshot
-            const docRef = db.collection('sessions').doc(current_session).collection('cells').doc(`${i}`);
+            if (r_x > 1) { // After 2nd snapshot
+                const docRef = db.collection('sessions').doc(current_session).collection('cells').doc(`${i}`);
 
-            docRef.get().then(function(doc) {
-                window.cells = document.querySelectorAll('.cell');
-                const result = doc.data();
+                docRef.get().then(function(doc) {
+                    window.cells = document.querySelectorAll('.cell');
+                    const result = doc.data(),
+                        fill = result.fill,
+                        innerText = result.innerText,
+                        bomb = result.bomb;
 
-                const fill = result.fill;
-                const innerText = result.innerText;
-                const bomb = result.bomb;
-
-                function place_selection(fill) {
-                    cells[i].dataset.fill = fill;
-                    if (!fill === current_player) {
-                        play_tone('explode');
+                    function place_selection(fill) {
+                        cells[i].dataset.fill = fill;
+                        if (!fill === current_player) {
+                            play_tone('explode');
+                        }
                     }
-                }
-                fill === undefined ? no() : place_selection(fill);
+                    fill === undefined ? no() : place_selection(fill);
 
-                innerText === undefined ? no() : cells[i].innerText = innerText;
-                bomb === undefined ? no() : cells[i].dataset.bomb = bomb;
+                    innerText === undefined ? no() : cells[i].innerText = innerText;
+                    bomb === undefined ? no() : cells[i].dataset.bomb = bomb;
 
-                update_scoreboard();
+                    update_scoreboard();
 
-            }).catch(function(error) {
-                console.log('Error getting document:', error);
-            });
-        }
+                }).catch(function(error) {
+                    console.log('Error getting document:', error);
+                });
+            }
 
-    });
+        });
     snapshots.push(snapshot_cells);
 }
 
 function add_death_snapshot_listener() {
     let death_count = 0; // Reset
-    for (i = 0; i < scores.length; i++) {
-        const player = scores[i].name.toLowerCase();
+    for (var i = 0; i < scores.length; i++) {
+        const player = scores[i].name.toLowerCase(),
+            docRef = db.collection('sessions').doc(current_session).collection('scores').doc(player),
+            snapshot_scores = docRef.onSnapshot(function(doc) {
+                docRef.get().then(function(doc) {
+                    if (doc.exists) {
+                        const result = doc.data(),
+                            dead = result.dead;
+                        dead && death_count++;
 
-        const docRef = db.collection('sessions').doc(current_session).collection('scores').doc(player);
-
-        const snapshot_scores = docRef.onSnapshot(function(doc) {
-            docRef.get().then(function(doc) {
-                if (doc.exists) {
-                    const result = doc.data();
-
-                    const dead = result.dead;
-                    dead && death_count++;
-
-                    if (death_count === (scores.length - 1)) { // If all but 1 died
-                        // declare_win();
-                        // Only works for host so far..
+                        if (death_count === (scores.length - 1)) { // If all but 1 died
+                            // declare_win();
+                            // Only works for host so far..
+                        }
+                    } else {
+                        // doc.data() will be undefined in this case
+                        console.log('No such document!');
                     }
-                } else {
-                    // doc.data() will be undefined in this case
-                    console.log('No such document!');
-                }
-            }).catch(function(error) {
-                console.log('Error getting document:', error);
-            });
+                }).catch(function(error) {
+                    console.log('Error getting document:', error);
+                });
 
-        });
+            });
         snapshots.push(snapshot_scores);
     }
 }
