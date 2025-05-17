@@ -1,4 +1,17 @@
 // ====================
+// INIT FIREBASE
+// ====================
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.firestore();
+
+window.firebase = firebase;
+window.db = db;
+
+// ====================
 // GENERAL FUNCTIONS
 // ====================
 
