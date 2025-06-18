@@ -128,6 +128,12 @@ function component(width, height, color, x, y, type, alignment) {
     }
 }
 
+function cutBtnPressed() {
+    bombGame.key = 32; // Space key
+    updateBombGame();
+    bombGame.key = false;
+}
+
 function updateBombGame() {
 
     if (isWireCut || !isTimerOn) {
