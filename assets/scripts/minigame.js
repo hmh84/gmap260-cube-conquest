@@ -29,7 +29,7 @@ function arm_bomb() {
     scissors2 = new component(270, 270, "assets/graphics/Scissors3DMoveableBlade_0.png", 10, bombGame.canvas.height * 0.01, "image");
     hitbox = new component(scissors.width * 0.05, scissors.height * 0.42, "", scissors.x + scissors.width * 0.6, scissors.y, "hidden");
     wireToCut = new component(Math.random() * 20 + 20, wire.height - 35, "green", Math.random() * (bombGame.canvas.width - 60), wire.y + 9, "transparent");
-    idealCut = new component(22, wireToCut.height, "assets/graphics/IdealCut.png", wireToCut.x + wireToCut.width * 0.5 - 11, wireToCut.y, "image")
+    idealCut = new component(22, wireToCut.height, "assets/graphics/IdealCut.png", wireToCut.x + wireToCut.width * 0.5 - 11, wireToCut.y, "image");
     prompt = new component("18px", "mainFont", "white", 48, 360, "text", "center");
     prompt2 = new component("18px", "mainFont", "white", 350, 375, "text", "center");
     prompt3 = new component("18px", "mainFont", "white", 48, 375, "text", "center");
@@ -45,27 +45,27 @@ function arm_bomb() {
 
 var bombGame = {
     canvas: document.createElement("canvas"),
-    start: function() {
+    start: function () {
         this.canvas.width = 400;
         this.canvas.height = 400;
         this.context = this.canvas.getContext("2d");
         // modal_bomb.appendChild(this.canvas);
         modal_bomb.insertBefore(this.canvas, modal_bomb.childNodes[0]);
         this.interval = setInterval(updateBombGame, 20);
-        window.addEventListener('keydown', function(e) {
+        window.addEventListener('keydown', function (e) {
             bombGame.key = e.keyCode;
-        })
-        window.addEventListener('keyup', function(e) {
+        });
+        window.addEventListener('keyup', function (e) {
             bombGame.key = false;
-        })
+        });
     },
-    clear: function() {
+    clear: function () {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
-    stop: function() {
+    stop: function () {
         clearInterval(this.interval);
     }
-}
+};
 
 function component(width, height, color, x, y, type, alignment) {
     this.type = type;
@@ -80,7 +80,7 @@ function component(width, height, color, x, y, type, alignment) {
     this.x = x;
     this.y = y;
     this.color = color;
-    this.update = function() {
+    this.update = function () {
         ctx = bombGame.context;
         if (this.type == "text") {
             ctx.font = this.width + " " + this.height;
@@ -104,12 +104,12 @@ function component(width, height, color, x, y, type, alignment) {
             ctx.fillRect(this.x, this.y, this.width, this.height);
         }
 
-    }
-    this.newPos = function() {
+    };
+    this.newPos = function () {
         this.x += this.speedX;
         this.y += this.speedY;
-    }
-    this.overlap = function(otherComponent) {
+    };
+    this.overlap = function (otherComponent) {
         var thisLeftSide = this.x;
         var thisRightSide = this.x + this.width;
         var thisTopSide = this.y;
@@ -125,7 +125,7 @@ function component(width, height, color, x, y, type, alignment) {
         // Checks if the main component is away from the other component's side
         // If the scissors are directly to the left of the wire, thisRight < otherLeft is true, but everything else is false
         return overlap;
-    }
+    };
 }
 
 function cutBtnPressed() {
@@ -289,7 +289,7 @@ function defuse_bomb() {
     // APP_JS.....
     active_cell.dataset.bomb = false;
     push_diffuse(active_cell);
-    setTimeout(function() {
+    setTimeout(function () {
         // I am delayed
         toggle_modal('close');
     }, 1000);
@@ -298,7 +298,7 @@ function defuse_bomb() {
 function detonate_bomb() {
     // APP_JS.....
     kill_player(active_cell);
-    setTimeout(function() {
+    setTimeout(function () {
         // I am delayed
         toggle_modal('close');
     }, 2000); // 2s
